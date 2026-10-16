@@ -6,15 +6,14 @@
 
 [![GitHub Stars](https://img.shields.io/github/stars/RitualDev-Lab/AgentShield?style=for-the-badge&logo=github&color=8b5cf6)](https://github.com/RitualDev-Lab/AgentShield/stargazers)
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg?style=for-the-badge)](LICENSE)
-[![GitHub Action](https://img.shields.io/badge/GitHub_Action-v1-purple.svg?style=for-the-badge&logo=github-actions)](https://github.com/RitualDev-Lab/AgentShield)
+[![CI Status](https://img.shields.io/github/actions/workflow/status/RitualDev-Lab/AgentShield/test.yml?branch=main&style=for-the-badge&logo=github-actions&label=Tests)](https://github.com/RitualDev-Lab/AgentShield/actions/workflows/test.yml)
 [![Node Runtime](https://img.shields.io/badge/Node-%3E%3D20.0-emerald.svg?style=for-the-badge&logo=nodedotjs)](https://nodejs.org)
-[![Tests](https://img.shields.io/badge/Tests-69%2F69_Passing-brightgreen.svg?style=for-the-badge)](tests/)
 
 
 <br />
 
 
-[⚡ Quick Start](#-instant-30-second-setup) • [📖 Full Guide](GUIDE.md) • [🛡️ Agent Sandbox](#-1-autonomous-agent-shell-sandbox) • [🐙 GitHub Action](#-3-cicd-security-gate--github-action) • [🤖 Agent Skill](#-ai-agent-skill-integration) • [📋 Compliance](#-4-enterprise-compliance-auditor) • [💖 Donate](https://donation.rolenest.in/) • [🌐 Website](https://agentshield.ritualdev.in/)
+[⚡ Quick Start](#-instant-30-second-setup) • [📖 Full Guide](GUIDE.md) • [🛡️ Agent Sandbox](#-1-autonomous-agent-shell-sandbox) • [🐙 GitHub Action](#-3-cicd-security-gate--github-action) • [🤖 Agent Skill](#-ai-agent-skill-integration) • [📋 Compliance](#-4-enterprise-compliance-auditor) • [🏆 Bounties](SECURITY.md) • [🏛️ Governance](GOVERNANCE.md) • [📜 Grants](GRANTS.md) • [👥 Contributors](https://github.com/RitualDev-Lab/AgentShield/graphs/contributors) • [💖 Sponsor (Dodo)](https://checkout.dodopayments.com/buy/pdt_0NpjONGugY5QkrFDUaPva) • [🌐 Website](https://agentshield.ritualdev.in/)
 
 
 <br/><br/>
@@ -47,13 +46,13 @@ No account or complicated daemon required. Run instantly with `npx`:
 
 ```bash
 # 1. Audit any directory or config file for credentials
-npx @ritualdev_lab/agentshield scan .env
+npx @ritualdev-lab/agentshield scan .env
 
 # 2. Prevent git commits with leaked secrets (installs pre-commit gate)
-npx @ritualdev_lab/agentshield hook git-install
+npx @ritualdev-lab/agentshield hook git-install
 
 # 3. Safely wrap agent bash execution
-npx @ritualdev_lab/agentshield exec "cat .env"
+npx @ritualdev-lab/agentshield exec "cat .env"
 ```
 
 ---
@@ -64,7 +63,7 @@ npx @ritualdev_lab/agentshield exec "cat .env"
 Intercept and sandbox agent terminal execution. If an agent tries to read `.env`, dump shell variables (`printenv`), or send keys to outbound endpoints, AgentShield blocks it on the fly:
 
 ```bash
-npx @ritualdev_lab/agentshield exec "cat .env"
+npx @ritualdev-lab/agentshield exec "cat .env"
 # 🚨 [AgentShield Sandbox Block] Blocked attempt to read raw .env or private credential file.
 # Protected credentials from entering agent LLM context window!
 ```
@@ -74,10 +73,10 @@ Catch leaked credentials before they enter git history. Audits staged diffs auto
 
 ```bash
 # Install once in your repo (native git hook)
-npx @ritualdev_lab/agentshield hook git-install
+npx @ritualdev-lab/agentshield hook git-install
 
 # Or manually audit staged files
-npx @ritualdev_lab/agentshield hook check
+npx @ritualdev-lab/agentshield hook check
 ```
 
 Or using the standard [pre-commit](https://pre-commit.com/) framework (`.pre-commit-config.yaml`):
@@ -112,14 +111,14 @@ jobs:
 
 Or run via CLI in any CI container:
 ```bash
-npx @ritualdev_lab/agentshield ci --base origin/main --report security-report.md
+npx @ritualdev-lab/agentshield ci --base origin/main --report security-report.md
 ```
 
 ### 📋 4. Enterprise Compliance Auditor
 Audit files and code diffs against industry regulatory controls with ready-to-present scores:
 
 ```bash
-npx @ritualdev_lab/agentshield compliance .env
+npx @ritualdev-lab/agentshield compliance .env
 ```
 ```text
 📋 [ENTERPRISE COMPLIANCE AUDIT] Status: COMPLIANT (Score: 100%)
@@ -144,7 +143,7 @@ AgentShield provides 1-command generators for leading AI coding agent environmen
 ### Claude Code (`PreToolUse` Hook)
 Automatically intercept agent terminal executions before commands touch your environment:
 ```bash
-npx @ritualdev_lab/agentshield init-claude
+npx @ritualdev-lab/agentshield init-claude
 ```
 Generates `.claude/settings.json` configured with:
 ```json
@@ -153,16 +152,17 @@ Generates `.claude/settings.json` configured with:
     "PreToolUse": [
       {
         "matcher": "Bash|Terminal",
-        "command": "npx @ritualdev_lab/agentshield exec $COMMAND"
+        "command": "npx @ritualdev-lab/agentshield exec --claude-hook"
       }
     ]
   }
 }
 ```
+*Note: Claude Code delivers tool call payloads via stdin JSON. AgentShield inspects the payload in real-time and cleanly returns exit code `2` to halt unauthorized commands before execution.*
 
 ### Cursor & Windsurf Rules
 ```bash
-npx @ritualdev_lab/agentshield init-cursor
+npx @ritualdev-lab/agentshield init-cursor
 ```
 Generates `.cursor/rules.json` with sensitive path boundaries (`.env*`, `*.pem`, `id_rsa*`) and pre-execution command sandboxing.
 
@@ -209,7 +209,7 @@ AgentShield combines high-performance regular expressions with **Shannon Entropy
 Integrate AgentShield directly into your AI workflows, proxy servers, or custom agent frameworks:
 
 ```typescript
-import { AgentShieldEngine, AgentCommandSandbox, AgentStdioInterceptor } from "@ritualdev_lab/agentshield";
+import { AgentShieldEngine, AgentCommandSandbox, AgentStdioInterceptor } from "@ritualdev-lab/agentshield";
 
 const shield = new AgentShieldEngine();
 
@@ -227,11 +227,93 @@ const original = shield.rehydrate(result.sanitizedText);
 
 ---
 
-## 🤝 Community & Support
-
-- **Live Documentation**: [https://ritualdev-lab.github.io/AgentShield/](https://ritualdev-lab.github.io/AgentShield/)
-- **Security Policy**: Read our [SECURITY.md](SECURITY.md) for vulnerability disclosure.
+- **Live Documentation**: [https://agentshield.ritualdev.in/](https://agentshield.ritualdev.in/)
+- **Bug Bounty Program**: Read our [SECURITY.md](SECURITY.md) for rewards ($50 – $500).
+- **Open Governance Charter**: Read our [GOVERNANCE.md](GOVERNANCE.md) for project stewardship.
+- **Grant Applications**: Review our [GRANTS.md](GRANTS.md) dossier for NLnet, OpenSSF & Mozilla.
 - **Contributing**: Check out [CONTRIBUTING.md](CONTRIBUTING.md) to add new secret patterns.
+
+---
+
+## 👥 Team & Contributors
+
+AgentShield is initiated and maintained by the team at [RitualDev Lab](https://github.com/RitualDev-Lab) and protected by the global AI security research community.
+
+### 🛡️ Core Team & Direct Access Admins
+
+<table align="center">
+  <tr>
+    <td align="center" width="180">
+      <a href="https://github.com/divyanshujethi">
+        <img src="https://github.com/divyanshujethi.png" width="80" style="border-radius: 50%;" alt="Divyanshu Jethi"/><br />
+        <sub><b>Divyanshu Jethi</b></sub>
+      </a><br />
+      <sub>🚀 Founder &amp; Lead</sub><br />
+      <sub>🔑 <b>Direct Access Admin</b></sub>
+    </td>
+    <td align="center" width="180">
+      <a href="https://github.com/Sakshisharma1616">
+        <img src="https://github.com/Sakshisharma1616.png" width="80" style="border-radius: 50%;" alt="Sakshi Sharma"/><br />
+        <sub><b>Sakshi Sharma</b></sub>
+      </a><br />
+      <sub>🎨 Core Maintainer &amp; Product</sub><br />
+      <sub>🔑 <b>Direct Access Admin</b></sub>
+    </td>
+    <td align="center" width="180">
+      <a href="https://github.com/Ritual-Dev-Git">
+        <img src="https://github.com/Ritual-Dev-Git.png" width="80" style="border-radius: 50%;" alt="RitualDev"/><br />
+        <sub><b>RitualDev</b></sub>
+      </a><br />
+      <sub>⚙️ Core Maintainer &amp; Infra</sub><br />
+      <sub>🔑 <b>Direct Access Admin</b></sub>
+    </td>
+    <td align="center" width="180">
+      <a href="https://github.com/Divyanshu-hub-dotcom">
+        <img src="https://github.com/Divyanshu-hub-dotcom.png" width="80" style="border-radius: 50%;" alt="Divyanshu-hub-dotcom"/><br />
+        <sub><b>Divyanshu-hub-dotcom</b></sub>
+      </a><br />
+      <sub>🛠️ Core Member</sub>
+    </td>
+    <td align="center" width="180">
+      <a href="https://github.com/ayushxx01">
+        <img src="https://github.com/ayushxx01.png" width="80" style="border-radius: 50%;" alt="Ayush"/><br />
+        <sub><b>Ayush</b></sub>
+      </a><br />
+      <sub>🛡️ Core Maintainer &amp; Triage</sub>
+    </td>
+  </tr>
+</table>
+
+### 🌟 Community Contributors & Security Researchers
+
+<table align="center">
+  <tr>
+    <td align="center" width="180">
+      <a href="https://github.com/ciperx">
+        <img src="https://github.com/ciperx.png" width="70" style="border-radius: 50%;" alt="ciperx"/><br />
+        <sub><b>ciperx</b></sub>
+      </a><br />
+      <sub>📜 OWASP ATLAS & AEO (PR #8)</sub>
+    </td>
+    <td align="center" width="180">
+      <a href="https://github.com/Voyagerroc-Lab">
+        <img src="https://github.com/Voyagerroc-Lab.png" width="70" style="border-radius: 50%;" alt="Voyagerroc-Lab"/><br />
+        <sub><b>Voyagerroc-Lab</b></sub>
+      </a><br />
+      <sub>🔒 Security & Rules Contributor</sub>
+    </td>
+  </tr>
+</table>
+
+<p align="center">
+  <a href="https://github.com/RitualDev-Lab/AgentShield/graphs/contributors">
+    <img src="https://contrib.rocks/image?repo=RitualDev-Lab/AgentShield" alt="AgentShield Contributors" />
+  </a>
+</p>
+
+<p align="center">
+  Huge thanks to all our open-source <a href="https://github.com/RitualDev-Lab/AgentShield/graphs/contributors">Contributors</a>!
+</p>
 
 <div align="center">
   <sub>Maintained with 💜 by <a href="https://github.com/RitualDev-Lab">RitualDev Lab</a> • Licensed under Apache 2.0</sub>

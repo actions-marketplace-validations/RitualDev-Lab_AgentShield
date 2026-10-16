@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
+import { platform } from "node:os";
 import { join } from "node:path";
 import { loadConfig, parseCustomPatterns } from "./config.js";
 import { AgentShieldEngine } from "./engine.js";
@@ -25,30 +26,33 @@ function printHelp() {
   printBanner();
   console.log(`
 Usage:
-  npx @ritualdev_lab/agentshield scan <file-path>       Scan a file for leaked secrets
-  npx @ritualdev_lab/agentshield redact <file-path>     Redact secrets and print sanitized text
-  npx @ritualdev_lab/agentshield stream                 Redact secrets from piped stdin (for terminal hooks)
-  npx @ritualdev_lab/agentshield exec <command>         Safely sandbox & intercept agent bash command
-  npx @ritualdev_lab/agentshield run <command>          Run command with real-time streaming stdio secret redaction
-  npx @ritualdev_lab/agentshield hook git-install       Install automatic git pre-commit leak shield
-  npx @ritualdev_lab/agentshield hook check             Audit git staged files before commit
-  npx @ritualdev_lab/agentshield ci                     Audit pull request or git diff in CI/CD pipeline
-  npx @ritualdev_lab/agentshield init-claude            Generate Claude Code PreToolUse hook configuration
-  npx @ritualdev_lab/agentshield init-cursor            Generate Cursor / Windsurf settings.json protection rules
-  npx @ritualdev_lab/agentshield benchmark              Run sub-millisecond scanning throughput benchmarks
+  npx @ritualdev-lab/agentshield scan <file-path>       Scan a file for leaked secrets
+  npx @ritualdev-lab/agentshield redact <file-path>     Redact secrets and print sanitized text
+  npx @ritualdev-lab/agentshield stream                 Redact secrets from piped stdin (for terminal hooks)
+  npx @ritualdev-lab/agentshield exec <command>         Safely sandbox & intercept agent bash command
+  npx @ritualdev-lab/agentshield hook install           Install automatic git pre-commit leak shield (.git/hooks)
+  npx @ritualdev-lab/agentshield hook uninstall         Uninstall automatic git pre-commit leak shield
+  npx @ritualdev-lab/agentshield hook husky             Configure AgentShield for Husky (.husky/pre-commit)
+  npx @ritualdev-lab/agentshield hook check             Audit git staged files before commit
+  npx @ritualdev-lab/agentshield ci                     Audit pull request or git diff in CI/CD pipeline
+  npx @ritualdev-lab/agentshield init-claude            Generate Claude Code PreToolUse hook configuration
+  npx @ritualdev-lab/agentshield init-cursor            Generate Cursor / Windsurf settings.json protection rules
+  npx @ritualdev-lab/agentshield benchmark              Run sub-millisecond scanning throughput benchmarks
+  npx @ritualdev-lab/agentshield badge <tool-name>      Generate Secured by AgentShield verified sponsor badge markdown / SVG
+  npx @ritualdev-lab/agentshield bounty-verify <input>  Run local security PoC check against sandbox and secret engine
 
 Enterprise Team Fleet & Remote Policy:
-  npx @ritualdev_lab/agentshield login --org <id> --token <key>   Authenticate machine with enterprise organization
-  npx @ritualdev_lab/agentshield logout                           Disconnect machine and clear organization credentials
-  npx @ritualdev_lab/agentshield policy sync                      Fetch and synchronize remote enterprise security policy
-  npx @ritualdev_lab/agentshield server [--port <number>]         Run local/self-hosted SaaS Control Plane server MVP
-  npx @ritualdev_lab/agentshield attestation [--org <name>]       Generate cryptographic SOC 2 / ISO 27001 bundle
+  npx @ritualdev-lab/agentshield login --org <id> --token <key>   Authenticate machine with enterprise organization
+  npx @ritualdev-lab/agentshield logout                           Disconnect machine and clear organization credentials
+  npx @ritualdev-lab/agentshield policy sync                      Fetch and synchronize remote enterprise security policy
+  npx @ritualdev-lab/agentshield server [--port <number>]         Run local/self-hosted SaaS Control Plane server MVP
+  npx @ritualdev-lab/agentshield attestation [--org <name>]       Generate cryptographic SOC 2 / ISO 27001 bundle
 
 Experimental Labs & Enterprise Controls (--labs / --experimental):
-  npx @ritualdev_lab/agentshield compliance <file>      Audit credentials for SOC2, PCI-DSS, HIPAA & ISO27001
-  npx @ritualdev_lab/agentshield audit                  Audit workspace MCP, .claude, and agent permission configs
-  npx @ritualdev_lab/agentshield mcp-proxy              Run inline JSON-RPC proxy filter for MCP tool calls
-  npx @ritualdev_lab/agentshield ledger verify          Verify cryptographic integrity of audit ledger HMAC chain
+  npx @ritualdev-lab/agentshield compliance <file>      Audit credentials for SOC2, PCI-DSS, HIPAA & ISO27001
+  npx @ritualdev-lab/agentshield audit                  Audit workspace MCP, .claude, and agent permission configs
+  npx @ritualdev-lab/agentshield mcp-proxy              Run inline JSON-RPC proxy filter for MCP tool calls
+  npx @ritualdev-lab/agentshield ledger verify          Verify cryptographic integrity of audit ledger HMAC chain
 
 Options:
   --base <branch>                        Git base ref for CI diff (default: origin/main)
@@ -339,46 +343,102 @@ async function main() {
       process.exit(0);
     });
   } else if (command === "hook") {
-    const subAction = args[1];
+    const subAction = args[1] || "check";
     const { GitPreCommitGate } = await import("./gate.js");
     const gate = new GitPreCommitGate(engine);
 
-    if (subAction === "git-install") {
+    if (subAction === "install" || subAction === "git-install") {
       const success = gate.installHook();
       if (success) {
         console.log(
           "✅ [AgentShield] Git pre-commit leak shield successfully installed in .git/hooks/pre-commit",
         );
+        process.exit(0);
       } else {
         console.error(
           "❌ [AgentShield] Could not find .git directory. Run this command inside a Git repository.",
         );
         process.exit(1);
       }
-    } else if (subAction === "check") {
+    } else if (subAction === "uninstall") {
+      const success = gate.uninstallHook();
+      if (success) {
+        console.log("✅ [AgentShield] Pre-commit hook removed from .git/hooks/pre-commit");
+        process.exit(0);
+      } else {
+        console.warn("⚠️ [AgentShield] No AgentShield pre-commit hook found to uninstall.");
+        process.exit(0);
+      }
+    } else if (subAction === "husky") {
+      const success = gate.installHuskyHook();
+      if (success) {
+        console.log(
+          "✅ [AgentShield] Husky pre-commit hook successfully configured in .husky/pre-commit",
+        );
+        process.exit(0);
+      } else {
+        console.error(
+          "❌ [AgentShield] Could not find .husky directory. Please initialize Husky ('npx husky init') first.",
+        );
+        process.exit(1);
+      }
+    } else if (subAction === "check" || subAction === "run") {
       const result = gate.auditStagedFiles();
-      console.log(result.report);
+      if (args.includes("--json")) {
+        console.log(JSON.stringify(result, null, 2));
+      } else {
+        console.log(result.report);
+      }
       if (!result.passed) {
         process.exit(1);
       }
+      process.exit(0);
     } else {
-      console.error("❌ Unknown hook action. Use 'git-install' or 'check'.");
+      console.error("❌ Unknown hook action. Supported: 'install', 'uninstall', 'husky', 'check'.");
       process.exit(1);
     }
   } else if (command === "exec" || command === "run") {
     // Intercept agent command execution using streaming stdio interceptor
-    const rawCmd = args
+    let rawCmd = args
       .slice(1)
-      .filter((a) => !a.startsWith("--kernel"))
+      .filter((a) => !a.startsWith("--kernel") && a !== "--claude-hook")
       .join(" ");
+
+    // Check if called via Claude Code PreToolUse hook (JSON on stdin or empty args)
+    if (!rawCmd && !process.stdin.isTTY) {
+      try {
+        const stdinChunks: Buffer[] = [];
+        for await (const chunk of process.stdin) {
+          stdinChunks.push(typeof chunk === "string" ? Buffer.from(chunk) : chunk);
+        }
+        const stdinStr = Buffer.concat(stdinChunks).toString("utf8").trim();
+        if (stdinStr) {
+          try {
+            const hookPayload = JSON.parse(stdinStr);
+            rawCmd = hookPayload.tool_input?.command || hookPayload.command || stdinStr;
+          } catch {
+            rawCmd = stdinStr;
+          }
+        }
+      } catch {
+        // Fallback
+      }
+    }
+
     if (!rawCmd) {
       console.error(
-        `❌ Error: No command provided to sandbox. Usage: npx @ritualdev_lab/agentshield ${command} <command>`,
+        `❌ Error: No command provided to sandbox. Usage: npx @ritualdev-lab/agentshield ${command} <command>`,
       );
       process.exit(1);
     }
 
     const enableKernel = args.includes("--kernel");
+    if (enableKernel && platform() !== "darwin") {
+      console.warn(
+        `⚠️  [AgentShield Isolation Notice] Kernel sandboxing (--kernel) was requested, but OS-level sandbox-exec is only supported on macOS (host: ${platform()}). Executing under AST pattern firewall and real-time streaming redaction.\n`,
+      );
+    }
+    const isClaudeHook = args.includes("--claude-hook") || process.env.CLAUDE_TOOL_USE !== undefined;
     const { AgentStdioInterceptor } = await import("./interceptor.js");
     const interceptor = new AgentStdioInterceptor(engine, process.cwd());
 
@@ -394,7 +454,8 @@ async function main() {
     });
 
     if (result.isBlocked) {
-      process.exit(1);
+      // Exit code 2 tells Claude Code to abort the tool execution cleanly
+      process.exit(isClaudeHook ? 2 : 1);
     }
     process.exit(result.exitCode);
   } else if (command === "ci") {
@@ -414,11 +475,46 @@ async function main() {
     }
 
     const result = runner.auditPullRequest(baseRef);
-    console.log(result.markdownReport);
+
+    if (args.includes("--json")) {
+      console.log(JSON.stringify(result, null, 2));
+    } else {
+      console.log(result.markdownReport);
+    }
+
+    // Emit GitHub Actions inline workflow annotations
+    if (args.includes("--annotate") && result.findings.length > 0) {
+      const { GitHubActionBot } = await import("./github-action.js");
+      GitHubActionBot.emitAnnotations(result.findings);
+    }
+
+    // Post or update sticky Pull Request review comment if requested or in PR workflow
+    if (args.includes("--post-pr-comment")) {
+      const { GitHubActionBot } = await import("./github-action.js");
+      const commentRes = await GitHubActionBot.postOrUpdatePrComment(result, {});
+      if (commentRes.success) {
+        console.log(
+          `\n💬 [AgentShield] PR review comment successfully ${commentRes.action} (id: ${commentRes.commentId})`,
+        );
+      } else if (commentRes.action !== "skipped") {
+        console.warn(`\n⚠️ [AgentShield] PR comment notification warning: ${commentRes.error}`);
+      }
+    }
+
+    let sarifPath: string | null = null;
+    const sarifIdx = args.indexOf("--sarif");
+    if (sarifIdx !== -1 && args[sarifIdx + 1]) {
+      sarifPath = args[sarifIdx + 1];
+    }
 
     if (reportPath) {
       writeFileSync(reportPath, result.markdownReport, "utf8");
       console.log(`\n📄 [AgentShield] Security report written to ${reportPath}`);
+    }
+
+    if (sarifPath && result.sarifLog) {
+      writeFileSync(sarifPath, JSON.stringify(result.sarifLog, null, 2), "utf8");
+      console.log(`\n📊 [AgentShield] OASIS SARIF 2.1.0 report written to ${sarifPath}`);
     }
 
     if (!result.passed) {
@@ -580,7 +676,7 @@ async function main() {
       }
     } else {
       console.error(
-        "❌ Unknown ledger action. Use 'npx @ritualdev_lab/agentshield ledger verify'.",
+        "❌ Unknown ledger action. Use 'npx @ritualdev-lab/agentshield ledger verify'.",
       );
       process.exit(1);
     }
@@ -612,7 +708,7 @@ async function main() {
         PreToolUse: [
           {
             matcher: "Bash|Terminal",
-            command: "npx @ritualdev_lab/agentshield exec $COMMAND",
+            command: "npx @ritualdev-lab/agentshield exec --claude-hook",
           },
         ],
       },
@@ -632,7 +728,7 @@ async function main() {
     const cursorConfig = {
       version: 1,
       security: {
-        preExecutionCommand: "npx @ritualdev_lab/agentshield exec $COMMAND",
+        preExecutionCommand: "npx @ritualdev-lab/agentshield exec $COMMAND",
         blockOnSensitiveFileRead: true,
         sensitivePatterns: [".env*", "*.pem", "id_rsa*", "*.key"],
       },
@@ -641,7 +737,106 @@ async function main() {
     printBanner();
     console.log(`✅ [Cursor / Windsurf] Protection rules written to: ${rulesPath}`);
     console.log("   AI agent workspace boundaries and credential paths are protected.\n");
+  } else if (command === "badge") {
+    const toolName = args.filter((a) => !a.startsWith("--"))[1];
+    if (!toolName) {
+      console.error("❌ Error: Please specify tool name. Usage: agentshield badge <tool-name> [--repo <url>] [--tier <verified|sponsor|enterprise>]");
+      process.exit(1);
+    }
+
+    let repoUrl = "";
+    const repoIdx = args.indexOf("--repo");
+    if (repoIdx !== -1 && args[repoIdx + 1]) repoUrl = args[repoIdx + 1];
+
+    let tier: "verified" | "sponsor" | "enterprise" = "verified";
+    const tierIdx = args.indexOf("--tier");
+    if (tierIdx !== -1 && args[tierIdx + 1]) {
+      const val = args[tierIdx + 1].toLowerCase();
+      if (val === "sponsor" || val === "enterprise" || val === "verified") {
+        tier = val;
+      }
+    }
+
+    const { VerifiedBadgeGenerator } = await import("./badge-generator.js");
+    const snippet = VerifiedBadgeGenerator.getMarkdownSnippet(toolName, "https://agentshield.ritualdev.in", tier);
+    const signature = repoUrl ? VerifiedBadgeGenerator.signAuditRecord(toolName, repoUrl, tier) : null;
+
+    if (args.includes("--svg")) {
+      const svg = VerifiedBadgeGenerator.generateSvgBadge(toolName, { tier });
+      console.log(svg);
+      process.exit(0);
+    }
+
+    printBanner();
+    console.log(`🛡️ [Secured by AgentShield] Verified Badge for "${toolName}" (${tier.toUpperCase()} TIER)\n`);
+    console.log("Markdown (for README.md):");
+    console.log(`  ${snippet.markdown}\n`);
+    console.log("HTML (for websites/docs):");
+    console.log(`  ${snippet.html}\n`);
+    console.log("Shields.io Badge URL:");
+    console.log(`  ${snippet.shieldsIoBadgeUrl}\n`);
+    if (signature) {
+      console.log("Cryptographic Verification Signature:");
+      console.log(`  ${signature}`);
+      console.log(`  Verify URL: https://agentshield.ritualdev.in/api/v1/badges/verify?tool=${encodeURIComponent(toolName)}&repo=${encodeURIComponent(repoUrl)}&tier=${tier}&hash=${signature}\n`);
+    }
     process.exit(0);
+  } else if (command === "bounty-verify") {
+    printBanner();
+    const target = args.filter((a) => !a.startsWith("--"))[1];
+    if (!target) {
+      console.error("❌ Error: Missing target payload. Usage: agentshield bounty-verify <file-or-command>");
+      process.exit(1);
+    }
+
+    console.log("🧪 [AgentShield Bounty Verification Engine] Evaluating exploit/bypass candidate...\n");
+
+    let isSecretLeak = false;
+    let isCommandBlocked = false;
+    let details = "";
+
+    // 1. Check if target is a file or raw string content
+    const { existsSync, readFileSync } = await import("node:fs");
+    let contentToScan = target;
+    if (existsSync(target)) {
+      contentToScan = readFileSync(target, "utf8");
+      console.log(`  • Input Source: File ('${target}')`);
+    } else {
+      console.log(`  • Input Source: Command / Raw String Payload ('${target}')`);
+    }
+
+    // 2. Run secret scan
+    const scan = engine.scanAndRedact(contentToScan);
+    if (scan.hasSecrets) {
+      isSecretLeak = true;
+      details += `  ✓ Intercepted ${scan.findings.length} secret token(s) [Redacted in-flight]\n`;
+    }
+
+    // 3. Run command sandbox inspect
+    const { AgentCommandSandbox } = await import("./sandbox.js");
+    const sandbox = new AgentCommandSandbox();
+    const sandboxCheck = sandbox.inspectCommand(target);
+    if (sandboxCheck.isBlocked) {
+      isCommandBlocked = true;
+      details += `  ✓ Sandbox intercepted prohibited command: "${sandboxCheck.reason}"\n`;
+    }
+
+    console.log(details || "  ℹ️ No secrets or forbidden commands detected by standard rules.\n");
+
+    if (isSecretLeak || isCommandBlocked) {
+      console.log("🛡️ [VERDICT: MITIGATED]");
+      console.log("   AgentShield successfully caught and neutralized this exploit vector.");
+      console.log("   If you believe you have discovered a novel bypass, submit your PoC at:");
+      console.log("   https://github.com/RitualDev-Lab/AgentShield/security/advisories/new\n");
+      process.exit(0);
+    } else {
+      console.log("⚠️ [VERDICT: UNRESTRICTED / POTENTIAL CANDIDATE]");
+      console.log("   Payload was not blocked by default rules.");
+      console.log("   If this payload extracts production credentials or breaks sandbox isolation,");
+      console.log("   it qualifies for a Community Bug Bounty ($50 - $500).");
+      console.log("   Report privately: https://github.com/RitualDev-Lab/AgentShield/security/advisories/new\n");
+      process.exit(0);
+    }
   } else {
     console.error(`❌ Unknown command '${command}'. Run 'agentshield --help' for usage.`);
     process.exit(1);

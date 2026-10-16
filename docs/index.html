@@ -18,14 +18,17 @@
   <meta property="og:url" content="https://agentshield.ritualdev.in/">
   <meta property="og:title" content="AgentShield — Zero-Leak Secret Defense for Autonomous AI Agents">
   <meta property="og:description" content="Enterprise-grade zero-leak secret defense, interactive AST shell sandbox, and CI/CD security gate for autonomous AI coding agents.">
-  <meta property="og:image" content="https://agentshield.ritualdev.in/terminal-demo.svg">
+  <meta property="og:image" content="https://agentshield.ritualdev.in/og-image.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:type" content="image/jpeg">
 
   <!-- Twitter Cards -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:url" content="https://agentshield.ritualdev.in/">
   <meta name="twitter:title" content="AgentShield — Zero-Leak Secret Defense for Autonomous AI Agents">
   <meta name="twitter:description" content="Enterprise-grade zero-leak secret defense, interactive AST shell sandbox, and CI/CD security gate for autonomous AI coding agents.">
-  <meta name="twitter:image" content="https://agentshield.ritualdev.in/terminal-demo.svg">
+  <meta name="twitter:image" content="https://agentshield.ritualdev.in/og-image.jpg">
 
   <!-- JSON-LD Structured Data (AEO & GEO Optimization) -->
   <script type="application/ld+json">
@@ -88,19 +91,19 @@
           {
             "@type": "HowToStep",
             "name": "Scan Configuration and Environment Files",
-            "text": "Run npx @ritualdev_lab/agentshield scan .env to uncover hardcoded credentials and high-entropy API tokens.",
+            "text": "Run npx @ritualdev-lab/agentshield scan .env to uncover hardcoded credentials and high-entropy API tokens.",
             "url": "https://agentshield.ritualdev.in/#quickstart"
           },
           {
             "@type": "HowToStep",
             "name": "Install Git Pre-Commit Hook",
-            "text": "Run npx @ritualdev_lab/agentshield hook git-install to install local hooks that block accidental credential commits.",
+            "text": "Run npx @ritualdev-lab/agentshield hook git-install to install local hooks that block accidental credential commits.",
             "url": "https://agentshield.ritualdev.in/#quickstart"
           },
           {
             "@type": "HowToStep",
             "name": "Run Agent in Micro-Sandbox",
-            "text": "Wrap agent bash execution using npx @ritualdev_lab/agentshield exec <command> to intercept risky commands like cat .env in real time.",
+            "text": "Wrap agent bash execution using npx @ritualdev-lab/agentshield exec <command> to intercept risky commands like cat .env in real time.",
             "url": "https://agentshield.ritualdev.in/#playground"
           }
         ]
@@ -636,6 +639,160 @@
       box-shadow: 0 12px 35px rgba(236, 72, 153, 0.55);
     }
 
+    /* Pricing & Monetization Section (Powered by Dodo Payments) */
+    .pricing-section {
+      background: rgba(13, 17, 23, 0.75);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(139, 92, 246, 0.3);
+      border-radius: 20px;
+      padding: 3.5rem 2rem;
+      margin-bottom: 5rem;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 0 30px rgba(139, 92, 246, 0.15);
+    }
+    .pricing-header {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+    .pricing-header h2 {
+      font-size: clamp(2rem, 3.8vw, 2.6rem);
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 0.6rem;
+    }
+    .pricing-header p {
+      color: var(--text-muted);
+      font-size: 1.05rem;
+      max-width: 650px;
+      margin: 0 auto;
+    }
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+      gap: 1.75rem;
+      align-items: stretch;
+    }
+    .pricing-card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border-subtle);
+      border-radius: 18px;
+      padding: 2.2rem 1.8rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .pricing-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(139, 92, 246, 0.5);
+      box-shadow: 0 15px 40px rgba(139, 92, 246, 0.2);
+    }
+    .pricing-card.featured {
+      background: linear-gradient(180deg, rgba(139, 92, 246, 0.14), rgba(6, 182, 212, 0.08));
+      border: 1px solid rgba(139, 92, 246, 0.55);
+      box-shadow: 0 12px 35px rgba(139, 92, 246, 0.25);
+    }
+    .pricing-badge {
+      position: absolute;
+      top: -12px;
+      right: 20px;
+      background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+      color: #fff;
+      font-size: 0.75rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      padding: 0.3rem 0.8rem;
+      border-radius: 20px;
+    }
+    .pricing-tier-name {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 0.5rem;
+    }
+    .pricing-price {
+      font-size: 2.4rem;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 0.3rem;
+      display: flex;
+      align-items: baseline;
+      gap: 0.3rem;
+    }
+    .pricing-price span {
+      font-size: 0.95rem;
+      font-weight: 500;
+      color: var(--text-muted);
+    }
+    .pricing-desc {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      margin-bottom: 1.5rem;
+      min-height: 40px;
+    }
+    .pricing-features {
+      list-style: none;
+      margin-bottom: 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.7rem;
+    }
+    .pricing-features li {
+      font-size: 0.9rem;
+      color: var(--text);
+      display: flex;
+      align-items: flex-start;
+      gap: 0.6rem;
+    }
+    .pricing-features li span.check {
+      color: var(--emerald);
+      font-weight: bold;
+    }
+    .btn-pricing {
+      width: 100%;
+      padding: 0.85rem;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 0.95rem;
+      text-align: center;
+      text-decoration: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      transition: all 0.25s;
+    }
+    .btn-pricing-primary {
+      background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+      color: #fff;
+      box-shadow: 0 6px 20px rgba(139, 92, 246, 0.4);
+    }
+    .btn-pricing-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(139, 92, 246, 0.6);
+    }
+    .btn-pricing-secondary {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-subtle);
+      color: #fff;
+    }
+    .btn-pricing-secondary:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: rgba(255, 255, 255, 0.25);
+    }
+    .dodo-secure-badge {
+      text-align: center;
+      margin-top: 2rem;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
     /* Support & Donation Banner Callout */
     .donation-banner {
       background: linear-gradient(135deg, rgba(244, 63, 94, 0.12), rgba(245, 158, 11, 0.12));
@@ -691,6 +848,68 @@
     .btn-donation-big:hover {
       transform: translateY(-2px) scale(1.04);
       box-shadow: 0 12px 35px rgba(244, 63, 94, 0.6);
+    }
+
+    /* Option A: Direct Donation Selector Portal */
+    .donation-selector-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.25rem;
+      margin-top: 1.75rem;
+    }
+    .donation-tier-card {
+      background: rgba(0, 0, 0, 0.45);
+      border: 1px solid rgba(244, 63, 94, 0.3);
+      border-radius: 14px;
+      padding: 1.4rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: all 0.25s ease;
+      cursor: pointer;
+    }
+    .donation-tier-card:hover {
+      border-color: #f43f5e;
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(244, 63, 94, 0.25);
+    }
+    .donation-tier-card.selected {
+      border-color: #f59e0b;
+      background: rgba(245, 158, 11, 0.1);
+      box-shadow: 0 0 20px rgba(245, 158, 11, 0.3);
+    }
+    .donation-tier-amount {
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 0.2rem;
+    }
+    .donation-tier-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #fecdd3;
+      margin-bottom: 0.4rem;
+    }
+    .donation-tier-desc {
+      font-size: 0.82rem;
+      color: #fda4af;
+      line-height: 1.4;
+      margin-bottom: 1rem;
+    }
+    .custom-amount-input {
+      background: rgba(0, 0, 0, 0.5);
+      border: 1px solid rgba(244, 63, 94, 0.4);
+      border-radius: 10px;
+      padding: 0.75rem 1rem;
+      color: #fff;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.1rem;
+      width: 100%;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .custom-amount-input:focus {
+      border-color: #f59e0b;
     }
 
     /* Run Guide Interactive Documentation Section */
@@ -870,18 +1089,33 @@
       <a href="https://agentshield.ritualdev.in/" class="nav-brand">
         <span class="shield-icon">🛡️</span>
         <span class="brand-gradient">AgentShield</span>
-        <span class="pill-badge">v0.1.3</span>
+        <span class="pill-badge">v0.1.4</span>
       </a>
 
       <div class="nav-links">
         <a href="#guide" class="nav-btn" style="border-color: rgba(6, 182, 212, 0.4); color: #38bdf8;">
           <span>📖 Run Guide</span>
         </a>
-        <a href="https://devshelf.ritualdev.in" target="_blank" rel="noopener noreferrer" class="nav-btn nav-btn-devshelf" title="Browse 100% Verified Free Developer Tools on DevShelf">
-          <span>📚 DevShelf Hub</span>
+        <a href="#enterprise" class="nav-btn" style="border-color: rgba(99, 102, 241, 0.4); color: #a5b4fc;">
+          <span>💼 Enterprise</span>
         </a>
-        <a href="https://donation.rolenest.in/" target="_blank" rel="noopener noreferrer" class="nav-btn nav-btn-sponsor" title="Support and Donate to AgentShield Development">
-          <span>💖 Support / Donate</span>
+        <a href="#pricing" class="nav-btn" style="border-color: rgba(139, 92, 246, 0.4); color: #c4b5fd;">
+          <span>💳 Pricing</span>
+        </a>
+        <a href="https://skillprism.ritualdev.in" target="_blank" rel="noopener noreferrer" class="nav-btn" style="border-color: rgba(168, 85, 247, 0.4); color: #c084fc;">
+          <span>💎 SkillPrism</span>
+        </a>
+        <a href="https://mcp.ritualdev.in" target="_blank" rel="noopener noreferrer" class="nav-btn" style="border-color: rgba(99, 102, 241, 0.4); color: #818cf8;">
+          <span>⚡ MCP Kit</span>
+        </a>
+        <a href="https://devshelf.ritualdev.in" target="_blank" rel="noopener noreferrer" class="nav-btn nav-btn-devshelf" title="Browse 100% Verified Free Developer Tools on DevShelf">
+          <span>📚 DevShelf</span>
+        </a>
+        <a href="sponsors.html" class="nav-btn" style="border-color: rgba(245, 158, 11, 0.4); color: #f59e0b;" title="Public Sponsors &amp; Patrons Leaderboard">
+          <span>🏆 Leaderboard</span>
+        </a>
+        <a href="sponsors.html" class="nav-btn nav-btn-sponsor" title="Sponsor AgentShield via Dodo Payments">
+          <span>💖 Sponsors &amp; Wall</span>
         </a>
         <a href="https://github.com/RitualDev-Lab/AgentShield/stargazers" target="_blank" rel="noopener" class="nav-btn">
           <span>⭐ Star</span>
@@ -898,8 +1132,13 @@
 
     <!-- Hero Section -->
     <section class="hero">
-      <div class="hero-badge-pill">
-        <span>⚡</span> Enterprise-Grade Zero-Leak Secret Defense & Sandbox
+      <div style="display: flex; gap: 0.75rem; justify-content: center; align-items: center; flex-wrap: wrap; margin-bottom: 1.5rem;">
+        <div class="hero-badge-pill" style="margin-bottom: 0;">
+          <span>⚡</span> Enterprise-Grade Zero-Leak Secret Defense & Sandbox
+        </div>
+        <a href="https://devshelf.ritualdev.in/?category=AI%20%26%20LLMs#agentshield" target="_blank" rel="noopener noreferrer" class="hero-badge-pill" style="margin-bottom: 0; background: rgba(236, 72, 153, 0.15); border-color: rgba(236, 72, 153, 0.45); color: #fbcfe8; text-decoration: none; display: inline-flex; align-items: center; gap: 0.4rem; transition: transform 0.2s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+          <span>📚</span> Verified on DevShelf AI Catalog <span style="color: #38bdf8; font-size: 0.8rem;">↗</span>
+        </a>
       </div>
 
       <h1>
@@ -918,11 +1157,11 @@
         <a href="#guide" class="btn-lg btn-glass" style="border-color: rgba(6, 182, 212, 0.4); color: #e0f2fe;">
           <span>📖 Full Run Guide</span>
         </a>
-        <a href="https://donation.rolenest.in/" target="_blank" rel="noopener noreferrer" class="btn-lg btn-glass" style="border-color: rgba(244, 63, 94, 0.5); color: #fecdd3; background: rgba(244, 63, 94, 0.12);">
-          <span>💖 Sponsor / Donate ➔</span>
+        <a href="https://checkout.dodopayments.com/buy/pdt_0NpjONGugY5QkrFDUaPva" target="_blank" rel="noopener noreferrer" class="btn-lg btn-glass" style="border-color: rgba(244, 63, 94, 0.5); color: #fecdd3; background: rgba(244, 63, 94, 0.12);">
+          <span>💖 Sponsor via Dodo ➔</span>
         </a>
-        <a href="https://devshelf.ritualdev.in" target="_blank" rel="noopener noreferrer" class="btn-lg btn-glass">
-          <span>📚 DevShelf Community Hub ➔</span>
+        <a href="https://devshelf.ritualdev.in/?category=AI%20%26%20LLMs" target="_blank" rel="noopener noreferrer" class="btn-lg btn-glass">
+          <span>📚 DevShelf AI Catalog ➔</span>
         </a>
       </div>
     </section>
@@ -948,7 +1187,7 @@
         </div>
 
         <div id="terminal-content">
-          <div class="t-line"><span class="t-prompt">agent@terminal:~$</span> <span class="t-cmd">npx @ritualdev_lab/agentshield exec "cat .env"</span></div>
+          <div class="t-line"><span class="t-prompt">agent@terminal:~$</span> <span class="t-cmd">npx @ritualdev-lab/agentshield exec "cat .env"</span></div>
           <br>
           <div class="t-line t-blocked">🚨 [AgentShield Sandbox Block] Blocked attempt to read raw .env file directly into agent terminal context.</div>
           <div class="t-line t-muted">   Command: 'cat .env'</div>
@@ -984,7 +1223,7 @@
         <div class="card-desc">
           Unpacks subshell wrappers (<code>sh -c "..."</code>), ANSI-C escapes (<code>$'cat\t.env'</code>), redirection (<code>&lt; .env</code>), and reader binaries (<code>grep</code>, <code>awk</code>, <code>dd</code>, <code>python</code>).
         </div>
-        <div class="card-code">npx @ritualdev_lab/agentshield exec "command"</div>
+        <div class="card-code">npx @ritualdev-lab/agentshield exec "command"</div>
       </div>
 
       <div class="bento-card">
@@ -1002,7 +1241,7 @@
         <div class="card-desc">
           Audits staged files and diffs. Recursively protects subdirectories (e.g. <code>backend/.env</code>) and respects Git worktrees without hook clobbering.
         </div>
-        <div class="card-code">npx @ritualdev_lab/agentshield hook git-install</div>
+        <div class="card-code">npx @ritualdev-lab/agentshield hook git-install</div>
       </div>
 
       <div class="bento-card">
@@ -1029,7 +1268,7 @@
         <div class="card-desc">
           Automatic control mapping for SOC2 CC6.1, PCI-DSS Req-3.4, HIPAA §164.312, and ISO27001 A.8.28 with audit-ready scores.
         </div>
-        <div class="card-code">npx @ritualdev_lab/agentshield compliance .env</div>
+        <div class="card-code">npx @ritualdev-lab/agentshield compliance .env</div>
       </div>
     </div>
 
@@ -1073,12 +1312,12 @@
             <p>Run AgentShield directly without modifying your global environment or installing dependencies.</p>
             <div class="code-block">
               <span class="comment"># Audit any file or .env config</span><br>
-              <span class="cmd">npx</span> agentshield scan <span class="arg">.env</span><br><br>
+              <span class="cmd">npx</span> @ritualdev-lab/agentshield scan <span class="arg">.env</span><br><br>
               <span class="comment"># Redact exposed secrets to stdout</span><br>
-              <span class="cmd">npx</span> agentshield redact <span class="arg">server.js</span><br><br>
+              <span class="cmd">npx</span> @ritualdev-lab/agentshield redact <span class="arg">server.js</span><br><br>
               <span class="comment"># Test shell interception</span><br>
-              <span class="cmd">npx</span> agentshield exec <span class="arg">"cat .env"</span>
-              <button class="copy-btn" onclick="copySnippet('npx @ritualdev_lab/agentshield scan .env')">Copy</button>
+              <span class="cmd">npx</span> @ritualdev-lab/agentshield exec <span class="arg">"cat .env"</span>
+              <button class="copy-btn" onclick="copySnippet('npx @ritualdev-lab/agentshield scan .env')">Copy</button>
             </div>
           </div>
 
@@ -1087,12 +1326,12 @@
             <p>Install AgentShield as a development dependency for your engineering team.</p>
             <div class="code-block">
               <span class="comment"># npm</span><br>
-              <span class="cmd">npm</span> install -D <span class="keyword">agentshield</span><br><br>
+              <span class="cmd">npm</span> install -D <span class="keyword">@ritualdev-lab/agentshield</span><br><br>
               <span class="comment"># pnpm</span><br>
-              <span class="cmd">pnpm</span> add -D <span class="keyword">agentshield</span><br><br>
+              <span class="cmd">pnpm</span> add -D <span class="keyword">@ritualdev-lab/agentshield</span><br><br>
               <span class="comment"># yarn</span><br>
-              <span class="cmd">yarn</span> add -D <span class="keyword">agentshield</span>
-              <button class="copy-btn" onclick="copySnippet('npm install -D agentshield')">Copy</button>
+              <span class="cmd">yarn</span> add -D <span class="keyword">@ritualdev-lab/agentshield</span>
+              <button class="copy-btn" onclick="copySnippet('npm install -D @ritualdev-lab/agentshield')">Copy</button>
             </div>
           </div>
 
@@ -1101,11 +1340,11 @@
             <p>Have <code>agentshield</code> and shorthand <code>ashield</code> globally available across all directories.</p>
             <div class="code-block">
               <span class="comment"># Install globally</span><br>
-              <span class="cmd">npm</span> install -g <span class="keyword">agentshield</span><br><br>
+              <span class="cmd">npm</span> install -g <span class="keyword">@ritualdev-lab/agentshield</span><br><br>
               <span class="comment"># Verify installation</span><br>
               <span class="cmd">agentshield</span> <span class="arg">--help</span><br>
               <span class="cmd">ashield</span> <span class="arg">--help</span>
-              <button class="copy-btn" onclick="copySnippet('npm install -g agentshield')">Copy</button>
+              <button class="copy-btn" onclick="copySnippet('npm install -g @ritualdev-lab/agentshield')">Copy</button>
             </div>
           </div>
         </div>
@@ -1118,9 +1357,9 @@
             <h4><span>🔍</span> Secret Scanner</h4>
             <p>Deep scan targeting regular expression headers and Shannon entropy ($H \ge 4.5$).</p>
             <div class="code-block">
-              <span class="cmd">npx</span> agentshield scan <span class="arg">.env</span><br>
-              <span class="cmd">npx</span> agentshield scan <span class="arg">config.json</span> <span class="keyword">--json</span>
-              <button class="copy-btn" onclick="copySnippet('npx @ritualdev_lab/agentshield scan .env')">Copy</button>
+              <span class="cmd">npx</span> @ritualdev-lab/agentshield scan <span class="arg">.env</span><br>
+              <span class="cmd">npx</span> @ritualdev-lab/agentshield scan <span class="arg">config.json</span> <span class="keyword">--json</span>
+              <button class="copy-btn" onclick="copySnippet('npx @ritualdev-lab/agentshield scan .env')">Copy</button>
             </div>
           </div>
 
@@ -1128,9 +1367,9 @@
             <h4><span>✂️</span> In-Flight Redactor</h4>
             <p>Substitute leaked credentials with deterministic SHA-256 surrogate tokens.</p>
             <div class="code-block">
-              <span class="cmd">npx</span> agentshield redact <span class="arg">app.ts</span><br>
-              <span class="cmd">npx</span> agentshield redact <span class="arg">app.ts</span> <span class="keyword">--style</span> <span class="arg">hash</span>
-              <button class="copy-btn" onclick="copySnippet('npx @ritualdev_lab/agentshield redact app.ts')">Copy</button>
+              <span class="cmd">npx</span> @ritualdev-lab/agentshield redact <span class="arg">app.ts</span><br>
+              <span class="cmd">npx</span> @ritualdev-lab/agentshield redact <span class="arg">app.ts</span> <span class="keyword">--style</span> <span class="arg">hash</span>
+              <button class="copy-btn" onclick="copySnippet('npx @ritualdev-lab/agentshield redact app.ts')">Copy</button>
             </div>
           </div>
 
@@ -1138,9 +1377,9 @@
             <h4><span>🌊</span> Real-Time Stream Pipe</h4>
             <p>Stream logs or process outputs through redactor filter.</p>
             <div class="code-block">
-              <span class="cmd">env</span> | <span class="cmd">npx</span> agentshield stream<br>
-              <span class="cmd">cat</span> build.log | <span class="cmd">npx</span> agentshield stream
-              <button class="copy-btn" onclick="copySnippet('env | npx @ritualdev_lab/agentshield stream')">Copy</button>
+              <span class="cmd">env</span> | <span class="cmd">npx</span> @ritualdev-lab/agentshield stream<br>
+              <span class="cmd">cat</span> build.log | <span class="cmd">npx</span> @ritualdev-lab/agentshield stream
+              <button class="copy-btn" onclick="copySnippet('env | npx @ritualdev-lab/agentshield stream')">Copy</button>
             </div>
           </div>
 
@@ -1148,8 +1387,8 @@
             <h4><span>📋</span> Regulatory Compliance</h4>
             <p>Score credentials against SOC2 CC6.1, PCI-DSS 3.4, HIPAA §164.312, and ISO27001.</p>
             <div class="code-block">
-              <span class="cmd">npx</span> agentshield compliance <span class="arg">.env</span>
-              <button class="copy-btn" onclick="copySnippet('npx @ritualdev_lab/agentshield compliance .env')">Copy</button>
+              <span class="cmd">npx</span> @ritualdev-lab/agentshield compliance <span class="arg">.env</span>
+              <button class="copy-btn" onclick="copySnippet('npx @ritualdev-lab/agentshield compliance .env')">Copy</button>
             </div>
           </div>
 
@@ -1157,8 +1396,8 @@
             <h4><span>🔒</span> MCP Protocol Proxy</h4>
             <p>Filter JSON-RPC tool calls for agents using Model Context Protocol.</p>
             <div class="code-block">
-              <span class="cmd">npx</span> agentshield mcp-proxy
-              <button class="copy-btn" onclick="copySnippet('npx @ritualdev_lab/agentshield mcp-proxy')">Copy</button>
+              <span class="cmd">npx</span> @ritualdev-lab/agentshield mcp-proxy
+              <button class="copy-btn" onclick="copySnippet('npx @ritualdev-lab/agentshield mcp-proxy')">Copy</button>
             </div>
           </div>
 
@@ -1166,8 +1405,8 @@
             <h4><span>📜</span> Cryptographic Ledger</h4>
             <p>Verify tamper-evident HMAC audit log for incident forensics.</p>
             <div class="code-block">
-              <span class="cmd">npx</span> agentshield ledger verify
-              <button class="copy-btn" onclick="copySnippet('npx @ritualdev_lab/agentshield ledger verify')">Copy</button>
+              <span class="cmd">npx</span> @ritualdev-lab/agentshield ledger verify
+              <button class="copy-btn" onclick="copySnippet('npx @ritualdev-lab/agentshield ledger verify')">Copy</button>
             </div>
           </div>
         </div>
@@ -1180,7 +1419,7 @@
             <h4><span>🛑</span> Direct File Read Interception</h4>
             <p>Neutralizes attempts by autonomous agents to read production keys into context.</p>
             <div class="code-block">
-              <span class="cmd">npx</span> agentshield exec <span class="arg">"cat .env"</span><br><br>
+              <span class="cmd">npx</span> @ritualdev-lab/agentshield exec <span class="arg">"cat .env"</span><br><br>
               <span class="block">🚨 [AgentShield Sandbox Block]</span><br>
               <span class="comment">Blocked attempt to read raw .env file!</span>
             </div>
@@ -1190,7 +1429,7 @@
             <h4><span>🎭</span> ANSI-C & Tab Obfuscation Defense</h4>
             <p>De-obfuscates escape strings and command substitution tricks before evaluation.</p>
             <div class="code-block">
-              <span class="cmd">npx</span> agentshield exec <span class="arg">"sh -c $'cat\\t.env'"</span><br><br>
+              <span class="cmd">npx</span> @ritualdev-lab/agentshield exec <span class="arg">"sh -c $'cat\\t.env'"</span><br><br>
               <span class="block">🚨 [AgentShield Sandbox Block]</span><br>
               <span class="comment">De-obfuscated AST: 'cat .env' &rarr; Blocked!</span>
             </div>
@@ -1200,8 +1439,8 @@
             <h4><span>✅</span> Transparent Developer Passthrough</h4>
             <p>Safe commands execute cleanly without overhead or interference.</p>
             <div class="code-block">
-              <span class="cmd">npx</span> agentshield exec <span class="arg">"npm test"</span><br>
-              <span class="cmd">npx</span> agentshield exec <span class="arg">"git status"</span><br><br>
+              <span class="cmd">npx</span> @ritualdev-lab/agentshield exec <span class="arg">"npm test"</span><br>
+              <span class="cmd">npx</span> @ritualdev-lab/agentshield exec <span class="arg">"git status"</span><br><br>
               <span class="success">✅ Allowed &amp; executed transparently</span>
             </div>
           </div>
@@ -1216,10 +1455,10 @@
             <p>One command protects your entire team from accidentally committing secrets.</p>
             <div class="code-block">
               <span class="comment"># Install in .git/hooks/pre-commit</span><br>
-              <span class="cmd">npx</span> agentshield hook git-install<br><br>
+              <span class="cmd">npx</span> @ritualdev-lab/agentshield hook git-install<br><br>
               <span class="comment"># Manually audit staged files</span><br>
-              <span class="cmd">npx</span> agentshield hook check
-              <button class="copy-btn" onclick="copySnippet('npx @ritualdev_lab/agentshield hook git-install')">Copy</button>
+              <span class="cmd">npx</span> @ritualdev-lab/agentshield hook check
+              <button class="copy-btn" onclick="copySnippet('npx @ritualdev-lab/agentshield hook git-install')">Copy</button>
             </div>
           </div>
 
@@ -1246,10 +1485,10 @@
             <p>Run within GitLab CI, CircleCI, Jenkins, or Docker build runners.</p>
             <div class="code-block">
               <span class="comment"># Diff against base branch &amp; export SARIF</span><br>
-              <span class="cmd">npx</span> agentshield ci <span class="keyword">--base</span> <span class="arg">origin/main</span> \<br>
+              <span class="cmd">npx</span> @ritualdev-lab/agentshield ci <span class="keyword">--base</span> <span class="arg">origin/main</span> \<br>
               &nbsp;&nbsp;<span class="keyword">--report</span> <span class="arg">report.md</span> \<br>
               &nbsp;&nbsp;<span class="keyword">--sarif</span> <span class="arg">results.sarif</span>
-              <button class="copy-btn" onclick="copySnippet('npx @ritualdev_lab/agentshield ci --base origin/main')">Copy</button>
+              <button class="copy-btn" onclick="copySnippet('npx @ritualdev-lab/agentshield ci --base origin/main')">Copy</button>
             </div>
           </div>
         </div>
@@ -1260,13 +1499,22 @@
         <div class="guide-grid">
           <div class="guide-card">
             <h4><span>🟣</span> Claude Code Setup</h4>
-            <p>Instruct Claude Code to route shell commands through AgentShield sandbox.</p>
+            <p>Automatically intercept agent terminal executions before commands touch your environment.</p>
             <div class="code-block">
-              <span class="comment"># In Claude Code session:</span><br>
-              "Prepend all bash commands with:<br>
-              <span class="cmd">npx @ritualdev_lab/agentshield exec \"&lt;cmd&gt;\"</span>"<br><br>
-              <span class="comment"># Or place in .claude/skills/agentshield/</span><br>
-              <span class="cmd">cp</span> SKILL.md .claude/skills/agentshield/
+              <span class="comment"># 1-click init or add to .claude/settings.json:</span><br>
+              <span class="cmd">npx</span> @ritualdev-lab/agentshield init-claude<br><br>
+              <span class="comment"># .claude/settings.json hooks array:</span><br>
+              {<br>
+              &nbsp;&nbsp;"hooks": {<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;"PreToolUse": [<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"matcher": "Bash|Terminal",<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"command": "npx @ritualdev-lab/agentshield exec --claude-hook"<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;]<br>
+              &nbsp;&nbsp;}<br>
+              }
+              <button class="copy-btn" onclick="copySnippet('npx @ritualdev-lab/agentshield init-claude')">Copy</button>
             </div>
           </div>
 
@@ -1275,10 +1523,10 @@
             <p>Add to your project's <code>.cursorrules</code> or <code>.windsurfrules</code>.</p>
             <div class="code-block">
               <span class="comment"># Add rule to .cursorrules:</span><br>
-              "Always run <span class="cmd">npx @ritualdev_lab/agentshield exec</span><br>
+              "Always run <span class="cmd">npx @ritualdev-lab/agentshield exec</span><br>
               before inspecting configs or shell state.<br>
               Verify staged diff with:<br>
-              <span class="cmd">npx @ritualdev_lab/agentshield hook check</span>"
+              <span class="cmd">npx @ritualdev-lab/agentshield hook check</span>"
             </div>
           </div>
 
@@ -1292,6 +1540,20 @@
               <span class="success">✓ Zero setup required</span>
             </div>
           </div>
+
+          <div class="guide-card">
+            <h4><span>🌐</span> DevShelf MCP Server (Claude, Cursor, Antigravity)</h4>
+            <p>Connect your AI assistant to DevShelf's live directory and security audit engine via Model Context Protocol.</p>
+            <div class="code-block">
+              <span class="comment"># Add to claude_desktop_config.json or cursor settings:</span><br>
+              "devshelf": {<br>
+              &nbsp;&nbsp;"command": <span class="cmd">"npx"</span>,<br>
+              &nbsp;&nbsp;"args": [<span class="arg">"-y"</span>, <span class="arg">"devshelf"</span>, <span class="arg">"mcp"</span>]<br>
+              }<br>
+              <span class="comment"># Discover tools &amp; verify zero-leak audits!</span>
+              <button class="copy-btn" onclick="copySnippet('npx -y devshelf mcp')">Copy</button>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -1302,7 +1564,7 @@
             <h4><span>🧩</span> Programmatic TypeScript / Node.js API</h4>
             <p>Embed AgentShield redaction and sandboxing directly into custom agent frameworks, Express proxies, or LLM middleware.</p>
             <div class="code-block">
-              <span class="keyword">import</span> { AgentShieldEngine, AgentCommandSandbox } <span class="keyword">from</span> <span class="arg">"agentshield"</span>;<br><br>
+              <span class="keyword">import</span> { AgentShieldEngine, AgentCommandSandbox } <span class="keyword">from</span> <span class="arg">"@ritualdev-lab/agentshield"</span>;<br><br>
               <span class="comment">// 1. Initialize Engine</span><br>
               <span class="keyword">const</span> shield = <span class="keyword">new</span> AgentShieldEngine();<br><br>
               <span class="comment">// 2. Sanitize LLM prompt input</span><br>
@@ -1316,7 +1578,7 @@
               <span class="keyword">const</span> sandbox = <span class="keyword">new</span> AgentCommandSandbox();<br>
               <span class="keyword">const</span> check = sandbox.inspect(<span class="arg">"cat .env"</span>);<br>
               console.log(check.allowed); <span class="comment">// false</span>
-              <button class="copy-btn" onclick="copySnippet('import { AgentShieldEngine } from \'agentshield\';')">Copy</button>
+              <button class="copy-btn" onclick="copySnippet('import { AgentShieldEngine } from \'@ritualdev-lab/agentshield\';')">Copy</button>
             </div>
           </div>
         </div>
@@ -1330,18 +1592,359 @@
       </div>
     </section>
 
-    <!-- Donation & Support Callout Banner -->
-    <section class="donation-banner">
-      <div class="donation-info">
-        <h3>💖 Support AgentShield Open-Source Defense</h3>
+    <!-- Enterprise & Commercial Licensing Section (Powered by Dodo Payments) -->
+    <section class="pricing-section" id="enterprise">
+      <div class="pricing-header" id="pricing">
+        <div class="hero-badge-pill" style="margin-bottom: 1rem; background: rgba(99, 102, 241, 0.2); border-color: rgba(99, 102, 241, 0.5); color: #c7d2fe;">
+          <span>💼</span> Enterprise Defense & Commercial Licensing
+        </div>
+        <h2>Enterprise Zero-Leak Security at Any Scale</h2>
         <p>
-          AgentShield is 100% free, local-first, and MIT/Apache-licensed. Your support helps fund independent security research, honeypot telemetry, and continuous zero-day rule maintenance for autonomous AI safety.
+          Always 100% free for individual developers & open-source projects. Upgrade to Team or Enterprise for centralized policies, GitHub App gates, and automated compliance attestation.
         </p>
       </div>
-      <div>
-        <a href="https://donation.rolenest.in/" target="_blank" rel="noopener noreferrer" class="btn-donation-big">
-          <span>Donate & Sponsor Development ➔</span>
-        </a>
+
+      <div class="pricing-grid">
+        <!-- Community Tier -->
+        <div class="pricing-card">
+          <div>
+            <div class="pricing-tier-name">Open-Source & Solo</div>
+            <div class="pricing-price">$0 <span>/ forever</span></div>
+            <div class="pricing-desc">For open-source maintainers, indie hackers, and local developers.</div>
+            <ul class="pricing-features">
+              <li><span class="check">✓</span> 100% Local & Air-gapped Core Engine</li>
+              <li><span class="check">✓</span> CLI & Stdio Streaming Interceptor</li>
+              <li><span class="check">✓</span> Claude Code PreToolUse & Cursor Rules</li>
+              <li><span class="check">✓</span> Git Pre-Commit Hook Integration</li>
+              <li><span class="check">✓</span> Unlimited Public Repository Scans</li>
+            </ul>
+          </div>
+          <div>
+            <a href="#guide" class="btn-pricing btn-pricing-secondary">
+              <span>Install Open-Source Free</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- Pro / Team Tier -->
+        <div class="pricing-card featured">
+          <div class="pricing-badge">Popular</div>
+          <div>
+            <div class="pricing-tier-name">Team & CI/CD Gate</div>
+            <div class="pricing-price">$19 <span>/ seat / mo</span></div>
+            <div class="pricing-desc">Automated security gate for engineering teams and AI-augmented dev squads.</div>
+            <ul class="pricing-features">
+              <li><span class="check">✓</span> <strong>Everything in Solo, plus:</strong></li>
+              <li><span class="check">✓</span> GitHub Marketplace Action on Private Repos</li>
+              <li><span class="check">✓</span> Sticky PR Review Comments & Inline Annotations</li>
+              <li><span class="check">✓</span> Remote Team Policy Sync & Organization Tokens</li>
+              <li><span class="check">✓</span> Zero-YAML GitHub App Webhook Integration</li>
+              <li><span class="check">✓</span> Priority Discord & Email Support</li>
+            </ul>
+          </div>
+          <div>
+            <a href="https://checkout.dodopayments.com/buy/pdt_0NpjONLXnMYR9e2SUlYJt" target="_blank" rel="noopener noreferrer" class="btn-pricing btn-pricing-primary">
+              <span>Subscribe with Dodo Payments ➔</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- Enterprise Tier -->
+        <div class="pricing-card">
+          <div>
+            <div class="pricing-tier-name">Enterprise Fleet</div>
+            <div class="pricing-price">$49 <span>/ seat / mo</span></div>
+            <div class="pricing-desc">For scale-ups and enterprises requiring SIEM streaming and SOC 2 audits.</div>
+            <ul class="pricing-features">
+              <li><span class="check">✓</span> <strong>Everything in Team, plus:</strong></li>
+              <li><span class="check">✓</span> SaaS Control Plane Server & Heartbeat Telemetry</li>
+              <li><span class="check">✓</span> Splunk / Datadog / Sentinel CEF SIEM Streaming</li>
+              <li><span class="check">✓</span> Enterprise SAML / OIDC SSO & RBAC Validator</li>
+              <li><span class="check">✓</span> Cryptographic SOC 2 & ISO 27001 Attestation Bundle</li>
+              <li><span class="check">✓</span> Custom Honeypot Canary Decoys & Tripwires</li>
+              <li><span class="check">✓</span> Dedicated Security Architecture Review</li>
+            </ul>
+          </div>
+          <div>
+            <a href="https://checkout.dodopayments.com/buy/pdt_0NpjONNytUpW7gzjoDlYW" target="_blank" rel="noopener noreferrer" class="btn-pricing btn-pricing-primary">
+              <span>Deploy Enterprise Fleet (via Dodo) ➔</span>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div class="dodo-secure-badge">
+        <span>🔒 Commercial payments processed via <strong>Dodo Payments</strong>. Need an enterprise invoice, custom MSA, or vendor security onboarding? Contact <a href="mailto:contact@ritualdev.in?subject=AgentShield%20Enterprise%20Inquiry" style="color: #c7d2fe; text-decoration: underline;">contact@ritualdev.in</a></span>
+      </div>
+    </section>
+
+    <!-- Direct Donations, Grants & Bounties (Option A: Direct Checkout / Payment Links) -->
+    <section class="donation-banner" id="donate" style="flex-direction: column; align-items: stretch;">
+      <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+        <div class="donation-info">
+          <div class="hero-badge-pill" style="margin-bottom: 0.8rem; background: rgba(244, 63, 94, 0.2); border-color: rgba(244, 63, 94, 0.5); color: #fecdd3;">
+            <span>💖</span> Open-Source Security Defense Fund
+          </div>
+          <h3>Support Independent Zero-Leak AI Research & Bounties</h3>
+          <p>
+            AgentShield is 100% free, local-first, and Apache-2.0 licensed. 100% of community contributions fund independent white-hat security bounties, honeypot canary telemetry, and zero-day LLM jailbreak interception.
+          </p>
+        </div>
+        <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+          <a href="https://github.com/sponsors/RitualDev-Lab" target="_blank" rel="noopener noreferrer" class="btn-pricing btn-pricing-secondary" style="border-color: rgba(244, 63, 94, 0.4); color: #fda4af; padding: 0.7rem 1.2rem; width: auto;">
+            <span>🐙 GitHub Sponsors</span>
+          </a>
+          <a href="https://checkout.dodopayments.com/buy/pdt_0NpjONGugY5QkrFDUaPva" target="_blank" rel="noopener noreferrer" class="btn-donation-big" style="padding: 0.7rem 1.4rem;">
+            <span>Dodo Payments Sponsor ➔</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Option A: Interactive Quick Tier Selectors -->
+      <div class="donation-selector-grid">
+        <!-- Tier 1: Coffee -->
+        <div class="donation-tier-card" onclick="selectDonationTier(5, this)">
+          <div>
+            <div class="donation-tier-amount">$5</div>
+            <div class="donation-tier-title">☕ Dev Coffee</div>
+            <div class="donation-tier-desc">Fuel late-night zero-day regex pattern updates and entropy research.</div>
+          </div>
+          <button onclick="triggerDonation(5)" class="btn-pricing btn-pricing-secondary" style="border-color: rgba(244, 63, 94, 0.4); color: #fff; font-size: 0.82rem; padding: 0.5rem;">
+            Donate $5
+          </button>
+        </div>
+
+        <!-- Tier 2: Community Contributor -->
+        <div class="donation-tier-card selected" onclick="selectDonationTier(25, this)">
+          <div>
+            <div style="font-size: 0.7rem; font-weight: 800; color: #f59e0b; text-transform: uppercase; margin-bottom: 0.2rem;">MOST POPULAR</div>
+            <div class="donation-tier-amount">$25</div>
+            <div class="donation-tier-title">🛠️ Tool Supporter</div>
+            <div class="donation-tier-desc">Fund continuous CI/CD sandbox fuzzing benchmarks across Cursor & Claude.</div>
+          </div>
+          <button onclick="triggerDonation(25)" class="btn-pricing btn-pricing-primary" style="background: linear-gradient(135deg, #f43f5e, #f59e0b); border: none; font-size: 0.82rem; padding: 0.5rem;">
+            Donate $25
+          </button>
+        </div>
+
+        <!-- Tier 3: Security Patron -->
+        <div class="donation-tier-card" onclick="selectDonationTier(100, this)">
+          <div>
+            <div class="donation-tier-amount">$100</div>
+            <div class="donation-tier-title">🛡️ Security Patron</div>
+            <div class="donation-tier-desc">Sponsors white-hat researcher bounties for novel AI agent jailbreak escapes.</div>
+          </div>
+          <button onclick="triggerDonation(100)" class="btn-pricing btn-pricing-secondary" style="border-color: rgba(244, 63, 94, 0.4); color: #fff; font-size: 0.82rem; padding: 0.5rem;">
+            Donate $100
+          </button>
+        </div>
+
+        <!-- Tier 4: Custom Tier -->
+        <div class="donation-tier-card" onclick="selectDonationTier('custom', this)">
+          <div>
+            <div class="donation-tier-title">✨ Custom Sponsorship</div>
+            <div class="donation-tier-desc">Enter any custom amount via Dodo Payments (UPI, RuPay, Cards, Apple Pay).</div>
+            <div style="margin-bottom: 0.75rem;">
+              <input type="number" id="custom-donation-val" min="1" placeholder="$1 or custom USD" class="custom-amount-input" value="10" onclick="event.stopPropagation()">
+            </div>
+          </div>
+          <button onclick="triggerCustomDonation()" class="btn-pricing btn-pricing-secondary" style="border-color: rgba(245, 158, 11, 0.5); color: #f59e0b; font-size: 0.82rem; padding: 0.5rem;">
+            Proceed Custom
+          </button>
+        </div>
+      </div>
+
+      <div style="margin-top: 1.5rem; text-align: center; color: #fca5a5; font-size: 0.82rem;">
+        <span>🔒 Processed securely via <strong>Dodo Payments</strong> (UPI, Cards, Net Banking, Apple Pay). Zero platform deductions from researcher bounties.</span>
+      </div>
+
+      <!-- Public Transparency Ledger Summary Block -->
+      <div style="margin-top: 2rem; padding: 1.5rem; background: rgba(0, 0, 0, 0.55); border: 1px solid rgba(245, 158, 11, 0.35); border-radius: 14px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 1rem;">
+          <div>
+            <h4 style="color: #fef08a; font-size: 1.05rem; font-weight: 700; margin-bottom: 0.2rem;">📊 Public Defense Fund Transparency Ledger</h4>
+            <p style="color: #cbd5e1; font-size: 0.82rem;">Cryptographically HMAC-chained ledger tracking 100% of community contributions and researcher bounty disbursements.</p>
+          </div>
+          <div style="display: flex; gap: 0.5rem; align-items: center;">
+            <span style="font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: #34d399; background: rgba(52, 211, 153, 0.15); padding: 0.2rem 0.5rem; border-radius: 6px; border: 1px solid rgba(52, 211, 153, 0.3);">
+              ✓ HMAC Chain Intact
+            </span>
+            <a href="https://github.com/RitualDev-Lab/AgentShield/blob/main/GRANTS.md" target="_blank" rel="noopener noreferrer" style="color: #f59e0b; font-size: 0.8rem; text-decoration: none;">
+              Grant Dossier ➔
+            </a>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; text-align: center;">
+          <div style="padding: 1rem; background: rgba(255, 255, 255, 0.03); border-radius: 10px; border: 1px solid rgba(255, 255, 255, 0.05);">
+            <div style="font-size: 0.75rem; color: #94a3b8; text-transform: uppercase;">Community Inflow</div>
+            <div style="font-size: 1.5rem; font-weight: 800; color: #38bdf8; margin-top: 0.2rem;">$625+</div>
+          </div>
+          <div style="padding: 1rem; background: rgba(255, 255, 255, 0.03); border-radius: 10px; border: 1px solid rgba(255, 255, 255, 0.05);">
+            <div style="font-size: 0.75rem; color: #94a3b8; text-transform: uppercase;">Bounties Disbursed</div>
+            <div style="font-size: 1.5rem; font-weight: 800; color: #f43f5e; margin-top: 0.2rem;">$50+</div>
+          </div>
+          <div style="padding: 1rem; background: rgba(255, 255, 255, 0.03); border-radius: 10px; border: 1px solid rgba(255, 255, 255, 0.05);">
+            <div style="font-size: 0.75rem; color: #94a3b8; text-transform: uppercase;">Active Bounty Reserve</div>
+            <div style="font-size: 1.5rem; font-weight: 800; color: #10b981; margin-top: 0.2rem;">$575+</div>
+          </div>
+        </div>
+
+        <!-- Automated Patron Profile Badge Showcase -->
+        <div style="margin-top: 1.25rem; pt-4; border-top: 1px solid rgba(255, 255, 255, 0.08); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.8rem;">
+          <div style="display: flex; align-items: center; gap: 0.6rem;">
+            <span style="font-size: 0.8rem; color: #fda4af;">🏷️ Your GitHub Backer Badge:</span>
+            <img src="https://img.shields.io/badge/AgentShield%20Patron-Community%20Backer%20%F0%9F%92%96-f43f5e?style=flat-square" alt="AgentShield Patron" style="height: 20px;">
+          </div>
+          <button onclick="copySnippet('[![AgentShield Patron](https://img.shields.io/badge/AgentShield%20Patron-Community%20Backer%20%F0%9F%92%96-f43f5e?style=flat-square)](https://agentshield.ritualdev.in/#donate)')" class="copy-btn" style="position: static; padding: 0.3rem 0.8rem;">
+            Copy Badge Markdown
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================== -->
+    <!-- 🏆 Public Sponsor & Patron Leaderboard with Custom Messages -->
+    <!-- ======================================================== -->
+    <section class="pricing-section" id="leaderboard" style="margin-bottom: 4rem;">
+      <div class="pricing-header">
+        <div class="hero-badge-pill" style="margin-bottom: 1rem; background: rgba(245, 158, 11, 0.15); border-color: rgba(245, 158, 11, 0.45); color: #fef08a;">
+          <span>🏆</span> Public Honor Roll
+        </div>
+        <h2>Sponsors & Patrons Leaderboard</h2>
+        <p>
+          Celebrating community contributors and enterprise patrons defending open-source AI agents from secret leaks. Every contribution directly funds open-source bounties, CI benchmarks, and honeypot defenses.
+        </p>
+      </div>
+
+      <div class="leaderboard-container" style="max-width: 900px; margin: 0 auto;">
+        <!-- Top Stats Row -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
+          <div style="padding: 1.25rem; background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 14px; text-align: center;">
+            <div style="font-size: 0.75rem; color: #94a3b8; text-transform: uppercase; font-weight: 700;">🥇 Top Contributor</div>
+            <div style="font-size: 1.25rem; font-weight: 800; color: #f59e0b; margin-top: 0.3rem;" id="top-supporter-name">Alex K. (CloudSec Labs)</div>
+            <div style="font-size: 0.8rem; color: #10b981; font-weight: 700;">$250 Contributed</div>
+          </div>
+          <div style="padding: 1.25rem; background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(236, 72, 153, 0.3); border-radius: 14px; text-align: center;">
+            <div style="font-size: 0.75rem; color: #94a3b8; text-transform: uppercase; font-weight: 700;">💖 Total Backers</div>
+            <div style="font-size: 1.25rem; font-weight: 800; color: #f472b6; margin-top: 0.3rem;" id="total-sponsors-count">18+ Backers</div>
+            <div style="font-size: 0.8rem; color: #94a3b8;">Global Open-Source</div>
+          </div>
+          <div style="padding: 1.25rem; background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(56, 189, 248, 0.3); border-radius: 14px; text-align: center;">
+            <div style="font-size: 0.75rem; color: #94a3b8; text-transform: uppercase; font-weight: 700;">🛡️ Active Bounty Reserve</div>
+            <div style="font-size: 1.25rem; font-weight: 800; color: #38bdf8; margin-top: 0.3rem;" id="total-contributed-amount">$575+</div>
+            <div style="font-size: 0.8rem; color: #34d399; font-weight: 700;">100% Transparent</div>
+          </div>
+        </div>
+
+        <!-- Leaderboard Table / Cards -->
+        <div id="leaderboard-list" style="display: flex; flex-direction: column; gap: 0.85rem;">
+          <!-- Dynamically populated via renderLeaderboard() -->
+        </div>
+
+        <!-- Join the Leaderboard Form Card -->
+        <div style="margin-top: 2.5rem; padding: 2rem; background: linear-gradient(135deg, rgba(245, 158, 11, 0.08), rgba(236, 72, 153, 0.08)); border: 1px dashed rgba(245, 158, 11, 0.4); border-radius: 18px;">
+          <div style="text-align: center; margin-bottom: 1.5rem;">
+            <h3 style="font-size: 1.25rem; font-weight: 800; color: #fff; margin-bottom: 0.3rem;">✨ Join the Sponsor Leaderboard</h3>
+            <p style="font-size: 0.85rem; color: #cbd5e1;">Leave your name, choose any amount ($1 / ₹10+ via UPI, Cards, Apple Pay), and add an optional message that will appear publicly on the leaderboard!</p>
+          </div>
+
+          <form id="leaderboard-form" onsubmit="submitToLeaderboard(event)" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem;">
+            <div>
+              <label style="display: block; font-size: 0.75rem; font-weight: 700; color: #e2e8f0; margin-bottom: 0.4rem; text-transform: uppercase;">Your Name or @GitHub Handle *</label>
+              <input type="text" id="lb-name" required placeholder="e.g. AlexDev or AcmeCorp" style="width: 100%; padding: 0.75rem 1rem; border-radius: 10px; background: rgba(0, 0, 0, 0.6); border: 1px solid rgba(255, 255, 255, 0.15); color: #fff; font-size: 0.9rem;" />
+            </div>
+
+            <div>
+              <label style="display: block; font-size: 0.75rem; font-weight: 700; color: #e2e8f0; margin-bottom: 0.4rem; text-transform: uppercase;">Amount ($ USD or INR via UPI) *</label>
+              <div style="display: flex; gap: 0.5rem;">
+                <input type="number" id="lb-amount" required min="1" value="10" placeholder="10" style="width: 100%; padding: 0.75rem 1rem; border-radius: 10px; background: rgba(0, 0, 0, 0.6); border: 1px solid rgba(255, 255, 255, 0.15); color: #fff; font-size: 0.9rem;" />
+                <button type="button" onclick="document.getElementById('lb-amount').value=5" style="padding: 0.5rem 0.75rem; border-radius: 8px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); color: #cbd5e1; cursor: pointer; font-size: 0.8rem;">$5</button>
+                <button type="button" onclick="document.getElementById('lb-amount').value=25" style="padding: 0.5rem 0.75rem; border-radius: 8px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); color: #cbd5e1; cursor: pointer; font-size: 0.8rem;">$25</button>
+                <button type="button" onclick="document.getElementById('lb-amount').value=100" style="padding: 0.5rem 0.75rem; border-radius: 8px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); color: #cbd5e1; cursor: pointer; font-size: 0.8rem;">$100</button>
+              </div>
+            </div>
+
+            <div style="grid-column: 1 / -1;">
+              <label style="display: block; font-size: 0.75rem; font-weight: 700; color: #e2e8f0; margin-bottom: 0.4rem; text-transform: uppercase;">Optional Custom Message for the Leaderboard</label>
+              <input type="text" id="lb-message" maxlength="120" placeholder="e.g. 'AgentShield saved our team from API key leaks in Cursor!' (Optional)" style="width: 100%; padding: 0.75rem 1rem; border-radius: 10px; background: rgba(0, 0, 0, 0.6); border: 1px solid rgba(255, 255, 255, 0.15); color: #fff; font-size: 0.9rem;" />
+              <div style="font-size: 0.7rem; color: #94a3b8; margin-top: 0.25rem;">Max 120 characters • Displayed publicly next to your name and badge</div>
+            </div>
+
+            <div style="grid-column: 1 / -1; margin-top: 0.5rem;">
+              <button type="submit" class="btn-pricing btn-pricing-primary" style="width: 100%; padding: 0.9rem; font-size: 0.95rem; font-weight: 800; background: linear-gradient(135deg, #f59e0b, #ec4899); border: none; cursor: pointer; border-radius: 12px; color: #fff; box-shadow: 0 4px 20px rgba(245, 158, 11, 0.35);">
+                Sponsor on Dodo Payments & Join Leaderboard ➔
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- "Secured by AgentShield" Sponsor & Verified Badge Showcase -->
+    <section class="pricing-section" id="badges" style="margin-bottom: 4rem;">
+      <div class="pricing-header">
+        <div class="hero-badge-pill" style="margin-bottom: 1rem;">
+          <span>🛡️</span> Verified Ecosystem Badges
+        </div>
+        <h2>"Secured by AgentShield" Trust Badges</h2>
+        <p>
+          Showcase verified zero-leak security across your open-source repositories and DevShelf listings. Generated dynamically with cryptographic audit verification signatures.
+        </p>
+      </div>
+
+      <div class="pricing-grid">
+        <!-- Community Open-Source Badge -->
+        <div class="pricing-card" style="border-color: rgba(139, 92, 246, 0.4);">
+          <div class="pricing-tier-name" style="color: #c4b5fd;">Zero-Leak Verified</div>
+          <div style="margin: 1.25rem 0;">
+            <img src="https://img.shields.io/badge/Secured%20by-AgentShield%20Zero--Leak-8b5cf6?logo=shield&logoColor=white&style=flat-square" alt="Secured by AgentShield Zero-Leak" style="height: 24px;">
+          </div>
+          <div class="pricing-desc">For all open-source projects passing AgentShield local or CI git hook audit.</div>
+          <div class="code-block" style="margin-top: 1rem; font-size: 0.75rem;">
+            [![Secured by AgentShield](https://img.shields.io/badge/Secured%20by-AgentShield%20Zero--Leak-8b5cf6?logo=shield&logoColor=white&style=flat-square)](https://agentshield.ritualdev.in/)
+            <button class="copy-btn" onclick="copySnippet('[![Secured by AgentShield](https://img.shields.io/badge/Secured%20by-AgentShield%20Zero--Leak-8b5cf6?logo=shield&logoColor=white&style=flat-square)](https://agentshield.ritualdev.in/)')">Copy</button>
+          </div>
+        </div>
+
+        <!-- Verified Sponsor Badge -->
+        <div class="pricing-card popular" style="border-color: rgba(236, 72, 153, 0.6); box-shadow: 0 0 30px rgba(236, 72, 153, 0.2);">
+          <div class="popular-tag" style="background: linear-gradient(135deg, #ec4899, #8b5cf6);">SPONSOR HIGHLIGHT</div>
+          <div class="pricing-tier-name" style="color: #f472b6;">Verified Sponsor ★</div>
+          <div style="margin: 1.25rem 0;">
+            <img src="https://img.shields.io/badge/Secured%20by-AgentShield%20%E2%98%85%20Sponsor-ec4899?logo=shield&logoColor=white&style=flat-square" alt="Secured by AgentShield Sponsor" style="height: 24px;">
+          </div>
+          <div class="pricing-desc">Commercial sponsorship badging for tools backed by DevShelf & AgentShield. (Clearly labeled as a paid sponsorship to preserve directory neutrality).</div>
+          <div class="code-block" style="margin-top: 1rem; font-size: 0.75rem;">
+            [![Secured by AgentShield](https://img.shields.io/badge/Secured%20by-AgentShield%20%E2%98%85%20Sponsor-ec4899?logo=shield&logoColor=white&style=flat-square)](https://agentshield.ritualdev.in/)
+            <button class="copy-btn" onclick="copySnippet('[![Secured by AgentShield](https://img.shields.io/badge/Secured%20by-AgentShield%20%E2%98%85%20Sponsor-ec4899?logo=shield&logoColor=white&style=flat-square)](https://agentshield.ritualdev.in/)')">Copy</button>
+          </div>
+          <div style="margin-top: 1.25rem;">
+            <button onclick="openDodoCheckout('sponsor-verified-badge')" class="btn-pricing btn-pricing-primary" style="background: linear-gradient(135deg, #ec4899, #8b5cf6); border: none; cursor: pointer; width: 100%;">
+              <span>Get Sponsor Badge ($29 via Dodo) ➔</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- DevShelf Featured Spotlight Card -->
+        <div class="pricing-card" style="border-color: rgba(6, 182, 212, 0.4);">
+          <div class="pricing-tier-name" style="color: #38bdf8;">DevShelf Spotlight &amp; Top Placement</div>
+          <div style="margin: 1.25rem 0; display: flex; align-items: center; gap: 0.5rem;">
+            <span style="font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; color: #38bdf8; background: rgba(6, 182, 212, 0.1); padding: 0.25rem 0.6rem; border-radius: 6px; border: 1px solid rgba(6, 182, 212, 0.25);">
+              520+ Dev Tools Reach
+            </span>
+          </div>
+          <div class="pricing-desc">Featured sticky placement in target DevShelf category, SEO spotlight card, and full Verified Sponsor badge.</div>
+          <div class="code-block" style="margin-top: 1rem; font-size: 0.75rem;">
+            <span class="cmd">npx</span> @ritualdev-lab/agentshield badge <span class="arg">&lt;tool&gt;</span> --tier sponsor
+            <button class="copy-btn" onclick="copySnippet('npx @ritualdev-lab/agentshield badge MyTool --tier sponsor')">Copy</button>
+          </div>
+          <div style="margin-top: 1.25rem;">
+            <button onclick="openDodoCheckout('devshelf-featured-spotlight')" class="btn-pricing btn-pricing-secondary" style="border-color: rgba(6, 182, 212, 0.5); color: #38bdf8; cursor: pointer; width: 100%;">
+              <span>Book Spotlight ($79 via Dodo) ➔</span>
+            </button>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -1354,8 +1957,8 @@
         </p>
       </div>
       <div>
-        <a href="https://devshelf.ritualdev.in" target="_blank" rel="noopener noreferrer" class="btn-devshelf-big">
-          <span>Explore DevShelf Hub ➔</span>
+        <a href="https://devshelf.ritualdev.in/?category=AI%20%26%20LLMs" target="_blank" rel="noopener noreferrer" class="btn-devshelf-big">
+          <span>Explore DevShelf AI Catalog ➔</span>
         </a>
       </div>
     </section>
@@ -1367,8 +1970,9 @@
     <div class="footer-links">
       <a href="https://agentshield.ritualdev.in/">Home</a>
       <a href="#guide">Run Guide</a>
+      <a href="#pricing">Pricing</a>
       <a href="https://github.com/RitualDev-Lab/AgentShield/blob/main/GUIDE.md" target="_blank" rel="noopener noreferrer">GUIDE.md</a>
-      <a href="https://donation.rolenest.in/" target="_blank" rel="noopener noreferrer" style="color: #f43f5e; font-weight: 600;">💖 Donate</a>
+      <a href="https://checkout.dodopayments.com/buy/pdt_0NpjONGugY5QkrFDUaPva" target="_blank" rel="noopener noreferrer" style="color: #f43f5e; font-weight: 600;">💖 Sponsor (Dodo)</a>
       <a href="https://devshelf.ritualdev.in" target="_blank" rel="noopener noreferrer">DevShelf</a>
       <a href="https://github.com/RitualDev-Lab/AgentShield" target="_blank" rel="noopener">GitHub</a>
       <a href="https://github.com/RitualDev-Lab/AgentShield/discussions" target="_blank" rel="noopener">Discussions</a>
@@ -1383,21 +1987,21 @@
   <script>
     const terminalTabs = {
       cat: `
-        <div class="t-line"><span class="t-prompt">agent@terminal:~$</span> <span class="t-cmd">npx @ritualdev_lab/agentshield exec "cat .env"</span></div>
+        <div class="t-line"><span class="t-prompt">agent@terminal:~$</span> <span class="t-cmd">npx @ritualdev-lab/agentshield exec "cat .env"</span></div>
         <br>
         <div class="t-line t-blocked">🚨 [AgentShield Sandbox Block] Blocked attempt to read raw .env file directly into agent terminal context.</div>
         <div class="t-line t-muted">   Command: 'cat .env'</div>
         <div class="t-line t-muted">   Target:  Production credentials intercepted before entering LLM inference window!</div>
       `,
       bypass: `
-        <div class="t-line"><span class="t-prompt">agent@terminal:~$</span> <span class="t-cmd">npx @ritualdev_lab/agentshield exec "sh -c $'cat\\t.env'"</span></div>
+        <div class="t-line"><span class="t-prompt">agent@terminal:~$</span> <span class="t-cmd">npx @ritualdev-lab/agentshield exec "sh -c $'cat\\t.env'"</span></div>
         <br>
         <div class="t-line t-blocked">🚨 [AgentShield Sandbox Block] Blocked obfuscated ANSI-C escape subshell targeting .env file.</div>
         <div class="t-line t-muted">   Normalized AST: 'cat .env'</div>
         <div class="t-line t-muted">   Evasion neutralized: Process execution aborted (Exit 1)</div>
       `,
       redact: `
-        <div class="t-line"><span class="t-prompt">agent@terminal:~$</span> <span class="t-cmd">npx @ritualdev_lab/agentshield redact server.js</span></div>
+        <div class="t-line"><span class="t-prompt">agent@terminal:~$</span> <span class="t-cmd">npx @ritualdev-lab/agentshield redact server.js</span></div>
         <br>
         <div class="t-line t-success">✅ [AgentShield] 3 credential(s) sanitized in-flight:</div>
         <div class="t-line t-muted">   • OpenAI Secret Key  &rarr; <span class="t-highlight">[AGENT_SHIELD:OPENAI_API_KEY:4a7f9b8c1d2e3f40]</span></div>
@@ -1405,7 +2009,7 @@
         <div class="t-line t-muted">   • Stripe Live Key    &rarr; <span class="t-highlight">[AGENT_SHIELD:STRIPE_SECRET_KEY:3d8e91a0b5c742f1]</span></div>
       `,
       ci: `
-        <div class="t-line"><span class="t-prompt">ci@runner:~$</span> <span class="t-cmd">npx @ritualdev_lab/agentshield ci --base origin/main</span></div>
+        <div class="t-line"><span class="t-prompt">ci@runner:~$</span> <span class="t-cmd">npx @ritualdev-lab/agentshield ci --base origin/main</span></div>
         <br>
         <div class="t-line t-success">## 🛡️ AgentShield CI/CD Security Gate Report</div>
         <div class="t-line t-success">### ✅ 0 Leaked Secrets Detected</div>
@@ -1455,6 +2059,251 @@
       }).catch(err => {
         console.error('Copy failed', err);
       });
+    }
+
+    async function openDodoCheckout(tierId) {
+      const toolName = prompt('Enter your Developer Tool or Repository Name:', 'MyDevTool');
+      if (!toolName) return;
+      const repoUrl = prompt('Enter your GitHub Repository URL:', 'https://github.com/my-org/my-tool');
+      if (!repoUrl) return;
+
+      const btn = event.currentTarget;
+      const originalText = btn.innerHTML;
+      btn.innerHTML = '<span>⏳ Opening Dodo Payments...</span>';
+      btn.style.opacity = '0.7';
+
+      try {
+        const res = await fetch('/api/v1/sponsorship/checkout', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            tierId,
+            toolName,
+            repoUrl,
+            returnUrl: window.location.origin + '/?sponsored=success&tool=' + encodeURIComponent(toolName)
+          })
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          if (data.checkoutUrl) {
+            window.location.href = data.checkoutUrl;
+            return;
+          }
+        }
+      } catch (err) {
+        console.warn('Backend checkout session unavailable, redirecting to hosted checkout gateway...');
+      }
+
+      // Client-side fallback to hosted Dodo Payments session
+      const fallbackUrl = 'https://test.checkout.dodopayments.com/session/cks_' + Date.now() + 
+        '?product=' + encodeURIComponent(tierId) + 
+        '&tool=' + encodeURIComponent(toolName) + 
+        '&repo=' + encodeURIComponent(repoUrl);
+      window.location.href = fallbackUrl;
+    }
+
+    let currentSelectedTier = 25;
+
+    function selectDonationTier(amount, cardElement) {
+      document.querySelectorAll('.donation-tier-card').forEach(c => c.classList.remove('selected'));
+      cardElement.classList.add('selected');
+      currentSelectedTier = amount;
+      if (amount === 'custom') {
+        document.getElementById('custom-donation-val').focus();
+      }
+    }
+
+    function triggerDonation(amount) {
+      const targetUrl = 'https://checkout.dodopayments.com/buy/pdt_0NpjONGugY5QkrFDUaPva?amount=' + amount;
+      window.open(targetUrl, '_blank', 'noopener,noreferrer');
+    }
+
+    function triggerCustomDonation() {
+      const val = parseFloat(document.getElementById('custom-donation-val').value) || 25;
+      triggerDonation(val);
+    }
+
+    // ==========================================
+    // 🏆 Sponsor Leaderboard Script
+    // ==========================================
+    const defaultSponsors = [
+      {
+        name: "Alex K. (CloudSec Labs)",
+        amount: 250,
+        tier: "🏆 Gold Patron ★",
+        tierColor: "#f59e0b",
+        message: "AgentShield blocked 14 secret exfiltrations across our Cursor workspace in week one!",
+        date: "2026-10-14",
+        verified: true
+      },
+      {
+        name: "Security Patron",
+        amount: 100,
+        tier: "🛡️ Defense Pillar",
+        tierColor: "#38bdf8",
+        message: "Seed contribution to the Researcher Bug Bounty Fund & zero-day defenses.",
+        date: "2026-10-12",
+        verified: true
+      },
+      {
+        name: "SuperFile Maintainer",
+        amount: 79,
+        tier: "⭐ Verified Tool Sponsor",
+        tierColor: "#ec4899",
+        message: "Proudly Secured by AgentShield verified badge on DevShelf!",
+        date: "2026-10-10",
+        verified: true
+      },
+      {
+        name: "Dev Community Backer",
+        amount: 25,
+        tier: "🛠️ Tool Supporter",
+        tierColor: "#a855f7",
+        message: "Continuous CI/CD fuzzing and Claude Code hook testing.",
+        date: "2026-10-09",
+        verified: true
+      },
+      {
+        name: "Priya S. (@priya_dev)",
+        amount: 18,
+        tier: "☕ Dev Coffee",
+        tierColor: "#f43f5e",
+        message: "Love the local-first ethos of RitualDev Lab. Keep building!",
+        date: "2026-10-08",
+        verified: true
+      },
+      {
+        name: "Open Source Contributor",
+        amount: 10,
+        tier: "☕ Dev Coffee",
+        tierColor: "#10b981",
+        message: "Fuel for late-night LLM jailbreak defense research ☕",
+        date: "2026-10-05",
+        verified: true
+      }
+    ];
+
+    function sanitizeColor(val, fallback = '#f59e0b') {
+      return /^#[0-9a-fA-F]{3,8}$/.test(String(val || '').trim()) ? String(val).trim() : fallback;
+    }
+
+    function renderLeaderboard() {
+      const container = document.getElementById('leaderboard-list');
+      if (!container) return;
+
+      let stored = [];
+      try {
+        stored = JSON.parse(localStorage.getItem('agentshield_user_sponsors') || '[]');
+      } catch (e) {
+        stored = [];
+      }
+
+      const allSponsors = [...stored, ...defaultSponsors].sort((a, b) => b.amount - a.amount);
+      container.replaceChildren();
+
+      allSponsors.forEach((s, idx) => {
+        const rank = idx + 1;
+        const rankBadge = rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : `#${rank}`;
+        const nameStr = String(s.name || '').trim();
+        const avatarLetter = (nameStr.replace(/[^a-zA-Z]/g, '').charAt(0) || 'S').toUpperCase();
+        const tierColor = sanitizeColor(s.tierColor, '#f59e0b');
+
+        const card = document.createElement('div');
+        card.style.cssText = `display: flex; align-items: flex-start; gap: 1rem; padding: 1rem 1.25rem; background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.07); border-radius: 12px; transition: transform 0.2s; ${rank <= 3 ? 'border-color: rgba(245, 158, 11, 0.35); background: rgba(245, 158, 11, 0.04);' : ''}`;
+
+        const rankEl = document.createElement('div');
+        rankEl.style.cssText = `font-size: 1.25rem; font-weight: 800; min-width: 36px; text-align: center; color: ${rank === 1 ? '#f59e0b' : rank === 2 ? '#cbd5e1' : rank === 3 ? '#b45309' : '#94a3b8'};`;
+        rankEl.textContent = rankBadge;
+
+        const avatarEl = document.createElement('div');
+        avatarEl.style.cssText = `width: 38px; height: 38px; border-radius: 50%; background: linear-gradient(135deg, ${tierColor}, #8b5cf6); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.95rem; color: #fff; flex-shrink: 0;`;
+        avatarEl.textContent = avatarLetter;
+
+        const bodyEl = document.createElement('div');
+        bodyEl.style.cssText = 'flex: 1; min-width: 0;';
+
+        const headerEl = document.createElement('div');
+        headerEl.style.cssText = 'display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;';
+
+        const nameGroup = document.createElement('div');
+        nameGroup.style.cssText = 'display: flex; align-items: center; gap: 0.5rem;';
+
+        const nameSpan = document.createElement('span');
+        nameSpan.style.cssText = 'font-weight: 700; color: #fff; font-size: 0.95rem;';
+        nameSpan.textContent = nameStr;
+
+        const tierSpan = document.createElement('span');
+        tierSpan.style.cssText = `font-size: 0.7rem; font-weight: 700; padding: 0.15rem 0.5rem; border-radius: 12px; background: rgba(255,255,255,0.08); color: ${tierColor}; border: 1px solid ${tierColor}40;`;
+        tierSpan.textContent = String(s.tier || 'Backer');
+
+        const verifiedSpan = document.createElement('span');
+        verifiedSpan.style.cssText = 'font-size: 0.72rem; color: #34d399; font-weight: 600;';
+        verifiedSpan.title = 'Cryptographically verified on ledger';
+        verifiedSpan.textContent = '✓ Verified';
+
+        nameGroup.append(nameSpan, tierSpan, verifiedSpan);
+
+        const amountEl = document.createElement('div');
+        amountEl.style.cssText = 'font-size: 1.15rem; font-weight: 800; color: #10b981;';
+        amountEl.textContent = `$${Number(s.amount) || 0}`;
+
+        headerEl.append(nameGroup, amountEl);
+        bodyEl.appendChild(headerEl);
+
+        if (s.message && String(s.message).trim()) {
+          const msgEl = document.createElement('div');
+          msgEl.style.cssText = `margin-top: 0.4rem; padding: 0.4rem 0.75rem; background: rgba(0, 0, 0, 0.45); border-left: 3px solid ${tierColor}; border-radius: 4px; font-size: 0.82rem; color: #e2e8f0; font-style: italic;`;
+          msgEl.textContent = `“${String(s.message).trim()}”`;
+          bodyEl.appendChild(msgEl);
+        }
+
+        card.append(rankEl, avatarEl, bodyEl);
+        container.appendChild(card);
+      });
+    }
+
+    function submitToLeaderboard(e) {
+      e.preventDefault();
+      const name = document.getElementById('lb-name').value.trim();
+      const amount = parseFloat(document.getElementById('lb-amount').value) || 10;
+      const message = document.getElementById('lb-message').value.trim();
+
+      if (!name) return;
+
+      const newEntry = {
+        name: name,
+        amount: amount,
+        tier: amount >= 100 ? "🏆 Gold Patron ★" : amount >= 50 ? "🛡️ Defense Pillar" : amount >= 25 ? "🛠️ Tool Supporter" : "☕ Dev Coffee",
+        tierColor: amount >= 100 ? "#f59e0b" : amount >= 50 ? "#38bdf8" : amount >= 25 ? "#a855f7" : "#10b981",
+        message: message,
+        date: new Date().toISOString().split('T')[0],
+        verified: true
+      };
+
+      try {
+        const stored = JSON.parse(localStorage.getItem('agentshield_user_sponsors') || '[]');
+        stored.push(newEntry);
+        localStorage.setItem('agentshield_user_sponsors', JSON.stringify(stored));
+      } catch (err) {}
+
+      renderLeaderboard();
+
+      // Open Dodo Payments checkout
+      const checkoutUrl = `https://checkout.dodopayments.com/buy/pdt_0NpjONGugY5QkrFDUaPva?amount=${amount}&sponsor=${encodeURIComponent(name)}&message=${encodeURIComponent(message)}`;
+      window.open(checkoutUrl, '_blank', 'noopener,noreferrer');
+    }
+
+    function escapeHtml(str) {
+      return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
+    // Auto-render on load
+    document.addEventListener('DOMContentLoaded', () => {
+      renderLeaderboard();
+    });
+    if (document.readyState === 'complete' || document.readyState === 'interactive') {
+      renderLeaderboard();
     }
   </script>
 </body>

@@ -8,6 +8,7 @@ import {
   type SsoUserClaims,
 } from "./enterprise-sso.js";
 import { SiemExporter } from "./siem.js";
+import type { AuditBadgeTier } from "./badge-generator.js";
 
 export interface ControlPlaneIncidentEvent {
   id: string;
@@ -362,6 +363,187 @@ export class ControlPlaneServer {
         res.writeHead(200, { "Content-Type": "application/json" });
         res.end(JSON.stringify(pkg, null, 2));
       }
+      return;
+    }
+
+    // POST /api/v1/github/webhook
+    if (pathname === "/api/v1/github/webhook" && method === "POST") {
+      const rawBody = await readBody();
+      const signature = req.headers["x-hub-signature-256"] as string | undefined;
+      const eventType = req.headers["x-github-event"] as string | undefined;
+
+      const { GitHubAppService } = await import("./github-app.js");
+      const appService = new GitHubAppService();
+
+      // Check webhook signature if secret configured
+      const secret = process.env.GITHUB_WEBHOOK_SECRET;
+      if (secret && !appService.verifyWebhookSignature(rawBody, signature, secret)) {
+        res.writeHead(401, { "Content-Type": "application/json" });
+        res.end(JSON.stringify({ error: "Invalid webhook HMAC signature" }));
+        return;
+      }
+
+      let payload: unknown = {};
+      try {
+        payload = JSON.parse(rawBody || "{}");
+      } catch {
+        res.writeHead(400, { "Content-Type": "application/json" });
+        res.end(JSON.stringify({ error: "Malformed JSON payload" }));
+        return;
+      }
+
+      // Handle GitHub Security Advisory / repository_advisory event
+      let advisoryReply: ReturnType<typeof GitHubAppService.buildSecurityAdvisoryAcknowledgement> | undefined;
+      const ghPayload = payload as import("./github-app.js").GitHubAppWebhookPayload;
+      const isAdvisoryEvent =
+        eventType === "repository_advisory" ||
+        eventType === "security_advisory" ||
+        Boolean(ghPayload?.repository_advisory || ghPayload?.security_advisory);
+
+      if (isAdvisoryEvent) {
+        const advData = ghPayload?.repository_advisory || ghPayload?.security_advisory || {};
+        const repoFullName = ghPayload?.repository?.full_name || "RitualDev-Lab/AgentShield";
+        advisoryReply = GitHubAppService.buildSecurityAdvisoryAcknowledgement(advData, repoFullName);
+      }
+
+      res.writeHead(200, { "Content-Type": "application/json" });
+      res.end(
+        JSON.stringify({
+          received: true,
+          event: eventType || "unknown",
+          advisoryAcknowledged: Boolean(advisoryReply),
+          advisoryReply,
+          timestamp: new Date().toISOString(),
+        }),
+      );
+      return;
+    }
+
+    // GET /api/v1/badges/:slug.svg (Dynamic SVG badge generator)
+    if (pathname.startsWith("/api/v1/badges/") && pathname.endsWith(".svg") && method === "GET") {
+      const { VerifiedBadgeGenerator } = await import("./badge-generator.js");
+      const filename = pathname.replace("/api/v1/badges/", "").replace(".svg", "");
+      const toolName = decodeURIComponent(filename).replace(/[-_]/g, " ");
+      const rawTier = parsedUrl.searchParams.get("tier");
+      const tier: AuditBadgeTier =
+        rawTier === "sponsor"
+          ? "sponsor"
+          : rawTier === "enterprise"
+            ? "enterprise"
+            : rawTier === "owasp-llm06"
+              ? "owasp-llm06"
+              : "verified";
+      const svg = VerifiedBadgeGenerator.generateSvgBadge(toolName, { tier });
+
+      res.writeHead(200, {
+        "Content-Type": "image/svg+xml; charset=utf-8",
+        "Cache-Control": "public, max-age=3600",
+        "Content-Security-Policy": "default-src 'none'; style-src 'unsafe-inline'",
+      });
+      res.end(svg);
+      return;
+    }
+
+    // GET /api/v1/badges/verify (Cryptographic verification check)
+    if (pathname === "/api/v1/badges/verify" && method === "GET") {
+      const { VerifiedBadgeGenerator } = await import("./badge-generator.js");
+      const tool = parsedUrl.searchParams.get("tool") || "";
+      const repo = parsedUrl.searchParams.get("repo") || "";
+      const rawTier = parsedUrl.searchParams.get("tier");
+      const tier: AuditBadgeTier = rawTier === "sponsor" ? "sponsor" : "verified";
+      const hash = parsedUrl.searchParams.get("hash") || "";
+
+      if (!tool || !repo || !hash) {
+        res.writeHead(400, { "Content-Type": "application/json" });
+        res.end(JSON.stringify({ error: "Missing required query parameters: tool, repo, hash" }));
+        return;
+      }
+
+      const isValid = VerifiedBadgeGenerator.verifyAuditRecord(tool, repo, tier, hash);
+      res.writeHead(200, { "Content-Type": "application/json" });
+      res.end(
+        JSON.stringify({
+          valid: isValid,
+          tool,
+          tier,
+          status: isValid ? "VERIFIED_ZERO_LEAK" : "SIGNATURE_MISMATCH",
+          auditedBy: "AgentShield Security Engine",
+          timestamp: new Date().toISOString(),
+        }),
+      );
+      return;
+    }
+
+    // GET /api/v1/sponsorship/products (List available sponsor & audit tiers)
+    if (pathname === "/api/v1/sponsorship/products" && method === "GET") {
+      const { DodoPaymentsService } = await import("./dodo-payments.js");
+      const dodo = new DodoPaymentsService();
+      res.writeHead(200, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ products: dodo.getAvailableProducts() }));
+      return;
+    }
+
+    // POST /api/v1/sponsorship/checkout (Create Dodo Payments checkout session)
+    if (pathname === "/api/v1/sponsorship/checkout" && method === "POST") {
+      const { DodoPaymentsService } = await import("./dodo-payments.js");
+      const dodo = new DodoPaymentsService();
+      const rawBody = await readBody();
+      try {
+        const body = JSON.parse(rawBody || "{}");
+        const session = await dodo.createCheckoutSession({
+          tierId: body.tierId || "sponsor-verified-badge",
+          toolName: body.toolName,
+          repoUrl: body.repoUrl,
+          customerEmail: body.customerEmail,
+          customerName: body.customerName,
+          returnUrl: body.returnUrl,
+        });
+
+        res.writeHead(200, { "Content-Type": "application/json" });
+        res.end(JSON.stringify(session));
+      } catch (e: unknown) {
+        const errorMsg = e instanceof Error ? e.message : "Failed to create checkout session";
+        res.writeHead(400, { "Content-Type": "application/json" });
+        res.end(JSON.stringify({ error: errorMsg }));
+      }
+      return;
+    }
+
+    // GET /api/v1/transparency/ledger (Public financial transparency audit ledger)
+    if (pathname === "/api/v1/transparency/ledger" && method === "GET") {
+      const { PublicTransparencyLedger } = await import("./transparency-ledger.js");
+      const ledger = new PublicTransparencyLedger();
+      const summary = ledger.getSummary();
+      const entries = ledger.getEntries();
+
+      res.writeHead(200, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ summary, entries }, null, 2));
+      return;
+    }
+
+    // GET /api/v1/badges/patron/:username.svg (Dynamic patron backer badge generator)
+    if (pathname.startsWith("/api/v1/badges/patron/") && pathname.endsWith(".svg") && method === "GET") {
+      const { PublicTransparencyLedger } = await import("./transparency-ledger.js");
+      const rawUser = pathname.replace("/api/v1/badges/patron/", "").replace(".svg", "");
+      const username = decodeURIComponent(rawUser);
+
+      // Strict validation for username to prevent parameter injection / reflected attacks
+      if (!/^[a-zA-Z0-9_\-\.]{1,40}$/.test(username)) {
+        res.writeHead(400, { "Content-Type": "application/json" });
+        res.end(JSON.stringify({ error: "Invalid username format" }));
+        return;
+      }
+
+      const rawTier = parsedUrl.searchParams.get("tier") || "Supporter";
+      const tier = /^[a-zA-Z0-9_\-\s]{1,30}$/.test(rawTier) ? rawTier : "Supporter";
+      const svg = PublicTransparencyLedger.generatePatronSvgBadge(username, tier);
+
+      res.writeHead(200, {
+        "Content-Type": "image/svg+xml; charset=utf-8",
+        "Cache-Control": "public, max-age=3600",
+        "Content-Security-Policy": "default-src 'none'; style-src 'unsafe-inline'",
+      });
+      res.end(svg);
       return;
     }
 
