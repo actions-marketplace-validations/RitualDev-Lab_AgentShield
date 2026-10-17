@@ -1,20 +1,21 @@
 import { spawn, type ChildProcess } from "node:child_process";
 import { homedir, platform } from "node:os";
 import { Transform } from "node:stream";
+import { StringDecoder } from "node:string_decoder";
 import { AgentShieldEngine } from "./engine.js";
-import { KernelSandboxConfinement } from "./kernel.js";
+import { KernelSandboxConfinement, type IsolationMechanism } from "./kernel.js";
 import { AgentCommandSandbox, type CommandInspectionResult } from "./sandbox.js";
 
 export interface StdioInterceptorOptions {
   workspaceDir?: string;
   enableKernelSandbox?: boolean;
+  requireIsolation?: boolean;
   maskStyle?: "token" | "hash" | "asterisk";
   onBlock?: (inspection: CommandInspectionResult) => void;
+  targetPlatform?: NodeJS.Platform;
 }
 
-export type IsolationMechanism =
-  | "macos_sandbox_exec"
-  | "process_level_firewall";
+export type { IsolationMechanism } from "./kernel.js";
 
 export interface InterceptedExecutionResult {
   exitCode: number;
@@ -23,6 +24,251 @@ export interface InterceptedExecutionResult {
   totalSecretsScrubbed: number;
   isolationMechanism: IsolationMechanism;
   isolationNotice: string;
+  downgradedIsolation?: boolean;
+}
+
+export interface RedactingStreamOptions {
+  maskStyle?: "token" | "hash" | "asterisk";
+  onSecretFound?: (count: number) => void;
+  maxWindowSize?: number;
+  maxMultilineBuffer?: number;
+}
+
+const PEM_START_REGEX =
+  /-----BEGIN (?:RSA |DSA |EC |OPENSSH |PGP |ENCRYPTED )?(?:PRIVATE )?KEY(?: BLOCK)?-----/;
+const PEM_END_REGEX =
+  /-----END (?:RSA |DSA |EC |OPENSSH |PGP |ENCRYPTED )?(?:PRIVATE )?KEY(?: BLOCK)?-----/;
+
+function findUnclosedPemStartIndex(text: string): number {
+  let searchPos = 0;
+  while (searchPos < text.length) {
+    const remaining = text.slice(searchPos);
+    const startMatch = remaining.match(PEM_START_REGEX);
+    if (!startMatch || startMatch.index === undefined) {
+      return -1;
+    }
+    const absStart = searchPos + startMatch.index;
+    const afterStart = text.slice(absStart + startMatch[0].length);
+    const endMatch = afterStart.match(PEM_END_REGEX);
+    if (!endMatch || endMatch.index === undefined) {
+      return absStart;
+    }
+    searchPos = absStart + startMatch[0].length + endMatch.index + endMatch[0].length;
+  }
+  return -1;
+}
+
+function findPotentialPemPrefixIndex(text: string): number {
+  if (PEM_END_REGEX.test(text.trimEnd())) return -1;
+  const match = text.match(
+    /(?<!END [A-Z0-9 ]*)-{1,5}(?:B(?:E(?:G(?:I(?:N(?: (?:[A-Z0-9 ]*)?)?)?)?)?)?)?$/,
+  );
+  return match && match.index !== undefined ? match.index : -1;
+}
+
+/**
+ * Boundary-Safe Real-Time Redacting Stream:
+ * Protects against stream fragmentation, multi-byte UTF-8 boundary slicing,
+ * multiline PEM private key exposure, and oversized payload denial-of-service.
+ */
+export class RedactingStream extends Transform {
+  private engine: AgentShieldEngine;
+  private maskStyle: "token" | "hash" | "asterisk";
+  private onSecretFound?: (count: number) => void;
+  private maxWindowSize: number;
+  private maxMultilineBuffer: number;
+  private maxUnbrokenBuffer: number;
+  private decoder: StringDecoder;
+  private pendingBuffer = "";
+
+  constructor(engine: AgentShieldEngine, options: RedactingStreamOptions = {}) {
+    super();
+    this.engine = engine;
+    this.maskStyle = options.maskStyle || "token";
+    this.onSecretFound = options.onSecretFound;
+    this.maxWindowSize = options.maxWindowSize ?? 512;
+    this.maxMultilineBuffer = options.maxMultilineBuffer ?? 64 * 1024;
+    this.maxUnbrokenBuffer = 16 * 1024;
+    this.decoder = new StringDecoder("utf8");
+  }
+
+  override _transform(
+    chunk: Buffer | string,
+    _encoding: BufferEncoding,
+    callback: (error?: Error | null, data?: Buffer) => void,
+  ): void {
+    const textChunk = Buffer.isBuffer(chunk) ? this.decoder.write(chunk) : chunk;
+    this.pendingBuffer += textChunk;
+
+    let candidateText = "";
+
+    // 1. Check for multiline PEM blocks
+    const unclosedPemIdx = findUnclosedPemStartIndex(this.pendingBuffer);
+    if (unclosedPemIdx !== -1) {
+      const openLength = this.pendingBuffer.length - unclosedPemIdx;
+      if (openLength > this.maxMultilineBuffer) {
+        // Fail-closed: oversized unclosed private key block
+        this.pendingBuffer = `${this.pendingBuffer.slice(0, unclosedPemIdx)}[AGENT_SHIELD:PRIVATE_KEY_BLOCK:TRUNCATED_OVERSIZED]`;
+        if (this.onSecretFound) this.onSecretFound(1);
+        candidateText = this.pendingBuffer;
+        this.pendingBuffer = "";
+      } else {
+        // Hold unclosed PEM block in pendingBuffer; process preceding text
+        candidateText = this.pendingBuffer.slice(0, unclosedPemIdx);
+        this.pendingBuffer = this.pendingBuffer.slice(unclosedPemIdx);
+      }
+    } else {
+      // Check for partial PEM header at the very tail
+      const potentialPemIdx = findPotentialPemPrefixIndex(this.pendingBuffer);
+      if (potentialPemIdx !== -1) {
+        candidateText = this.pendingBuffer.slice(0, potentialPemIdx);
+        this.pendingBuffer = this.pendingBuffer.slice(potentialPemIdx);
+      } else {
+        candidateText = this.pendingBuffer;
+        this.pendingBuffer = "";
+      }
+    }
+
+    if (candidateText.length === 0) {
+      callback(null, Buffer.alloc(0));
+      return;
+    }
+
+    // 2. Safe single-line & delimiter boundary windowing
+    let safeSlice = "";
+    let trailingSlice = "";
+
+    // Check if there are closed PEM blocks ending in candidateText to preserve them intact
+    let lastClosedPemEnd = -1;
+    let pemSearchPos = 0;
+    while (pemSearchPos < candidateText.length) {
+      const remaining = candidateText.slice(pemSearchPos);
+      const startMatch = remaining.match(PEM_START_REGEX);
+      if (!startMatch || startMatch.index === undefined) break;
+      const absStart = pemSearchPos + startMatch.index;
+      const afterStart = candidateText.slice(absStart + startMatch[0].length);
+      const endMatch = afterStart.match(PEM_END_REGEX);
+      if (!endMatch || endMatch.index === undefined) break;
+      const absEnd = absStart + startMatch[0].length + endMatch.index + endMatch[0].length;
+      lastClosedPemEnd = absEnd;
+      pemSearchPos = absEnd;
+    }
+
+    if (lastClosedPemEnd !== -1) {
+      safeSlice = candidateText.slice(0, lastClosedPemEnd);
+      const postPem = candidateText.slice(lastClosedPemEnd);
+      const lastNewline = postPem.lastIndexOf("\n");
+      if (lastNewline !== -1) {
+        safeSlice += postPem.slice(0, lastNewline + 1);
+        trailingSlice = postPem.slice(lastNewline + 1);
+      } else {
+        trailingSlice = postPem;
+      }
+    } else {
+      const lastNewline = candidateText.lastIndexOf("\n");
+      if (lastNewline !== -1) {
+        safeSlice = candidateText.slice(0, lastNewline + 1);
+        trailingSlice = candidateText.slice(lastNewline + 1);
+      } else {
+        trailingSlice = candidateText;
+      }
+    }
+
+    // If trailingSlice without newline exceeds safety threshold, split at safe delimiter
+    if (trailingSlice.length > this.maxWindowSize * 2) {
+      let splitIndex = -1;
+      const searchEnd = trailingSlice.length - this.maxWindowSize;
+      for (let i = searchEnd; i >= 0; i--) {
+        const char = trailingSlice[i];
+        if (
+          char === " " ||
+          char === "\t" ||
+          char === "," ||
+          char === ";" ||
+          char === "}" ||
+          char === "]"
+        ) {
+          splitIndex = i + 1;
+          break;
+        }
+      }
+
+      if (splitIndex !== -1) {
+        // Boundary scan: verify whether splitIndex intersects any active secret in trailingSlice
+        const boundaryWindow = trailingSlice.slice(
+          0,
+          Math.min(trailingSlice.length, splitIndex + this.maxWindowSize),
+        );
+        const findings = this.engine.scan(boundaryWindow, { includeRaw: true });
+        for (const finding of findings) {
+          if (!finding.raw) continue;
+          const matchPos = boundaryWindow.indexOf(finding.raw);
+          if (matchPos !== -1) {
+            const matchEnd = matchPos + finding.raw.length;
+            // If split cuts across this secret, back up splitIndex to before the secret
+            if (splitIndex > matchPos && splitIndex < matchEnd) {
+              splitIndex = matchPos;
+              break;
+            }
+          }
+        }
+      }
+
+      if (splitIndex > 0) {
+        safeSlice += trailingSlice.slice(0, splitIndex);
+        trailingSlice = trailingSlice.slice(splitIndex);
+      } else if (trailingSlice.length > this.maxUnbrokenBuffer) {
+        // Fail-closed forced cut for unbroken oversized tokens
+        const forcedSplit = trailingSlice.length - this.maxWindowSize;
+        safeSlice += trailingSlice.slice(0, forcedSplit);
+        trailingSlice = trailingSlice.slice(forcedSplit);
+      }
+    }
+
+    // Restore trailingSlice to front of pendingBuffer
+    this.pendingBuffer = trailingSlice + this.pendingBuffer;
+
+    if (safeSlice.length > 0) {
+      const result = this.engine.scanAndRedact(safeSlice, { maskStyle: this.maskStyle });
+      if (result.hasSecrets && this.onSecretFound) {
+        this.onSecretFound(result.totalFound);
+      }
+      callback(null, Buffer.from(result.sanitizedText, "utf8"));
+    } else {
+      callback(null, Buffer.alloc(0));
+    }
+  }
+
+  override _flush(callback: (error?: Error | null, data?: Buffer) => void): void {
+    const trailingUtf8 = this.decoder.end();
+    this.pendingBuffer += trailingUtf8;
+
+    if (this.pendingBuffer.length === 0) {
+      callback();
+      return;
+    }
+
+    // Fail-closed check: unclosed PEM block or partial header at EOF
+    const unclosedIdx = findUnclosedPemStartIndex(this.pendingBuffer);
+    if (unclosedIdx !== -1) {
+      this.pendingBuffer = `${this.pendingBuffer.slice(0, unclosedIdx)}[AGENT_SHIELD:PRIVATE_KEY_BLOCK:TRUNCATED]`;
+      if (this.onSecretFound) this.onSecretFound(1);
+    } else {
+      const partialHeaderIdx = findPotentialPemPrefixIndex(this.pendingBuffer);
+      if (partialHeaderIdx !== -1 && this.pendingBuffer.slice(partialHeaderIdx).length >= 5) {
+        this.pendingBuffer = `${this.pendingBuffer.slice(0, partialHeaderIdx)}[AGENT_SHIELD:PRIVATE_KEY_BLOCK:TRUNCATED]`;
+        if (this.onSecretFound) this.onSecretFound(1);
+      }
+    }
+
+    const result = this.engine.scanAndRedact(this.pendingBuffer, { maskStyle: this.maskStyle });
+    if (result.hasSecrets && this.onSecretFound) {
+      this.onSecretFound(result.totalFound);
+    }
+
+    this.pendingBuffer = "";
+    callback(null, Buffer.from(result.sanitizedText, "utf8"));
+  }
 }
 
 /**
@@ -33,37 +279,12 @@ export function createRedactingStream(
   engine: AgentShieldEngine,
   maskStyle: "token" | "hash" | "asterisk" = "token",
   onSecretFound?: (count: number) => void,
-): Transform {
-  let pendingBuffer = "";
-
-  return new Transform({
-    transform(chunk: Buffer, _encoding, callback) {
-      const text = pendingBuffer + chunk.toString("utf8");
-      // Keep trailing slice if split across boundary (max token length 128)
-      if (text.length > 256) {
-        const toProcess = text.slice(0, text.length - 128);
-        pendingBuffer = text.slice(text.length - 128);
-        const result = engine.scanAndRedact(toProcess, { maskStyle });
-        if (result.hasSecrets && onSecretFound) {
-          onSecretFound(result.totalFound);
-        }
-        callback(null, Buffer.from(result.sanitizedText, "utf8"));
-      } else {
-        pendingBuffer = text;
-        callback(null, Buffer.alloc(0));
-      }
-    },
-    flush(callback) {
-      if (pendingBuffer.length > 0) {
-        const result = engine.scanAndRedact(pendingBuffer, { maskStyle });
-        if (result.hasSecrets && onSecretFound) {
-          onSecretFound(result.totalFound);
-        }
-        callback(null, Buffer.from(result.sanitizedText, "utf8"));
-      } else {
-        callback();
-      }
-    },
+  options?: Omit<RedactingStreamOptions, "maskStyle" | "onSecretFound">,
+): RedactingStream {
+  return new RedactingStream(engine, {
+    ...options,
+    maskStyle,
+    onSecretFound,
   });
 }
 
@@ -101,6 +322,7 @@ export class AgentStdioInterceptor {
         totalSecretsScrubbed: 0,
         isolationMechanism: "process_level_firewall",
         isolationNotice: "Command blocked by AST pre-flight policy firewall before OS execution.",
+        downgradedIsolation: false,
       };
     }
 
@@ -120,35 +342,71 @@ export class AgentStdioInterceptor {
         totalSecretsScrubbed: 0,
         isolationMechanism: "process_level_firewall",
         isolationNotice: "Command blocked by kernel path containment verification.",
+        downgradedIsolation: false,
       };
     }
 
-    // 3. Execution with Real-Time Stdio Redaction Stream
+    // 3. Strict Isolation and Kernel Confinement Verification (Defect A2)
+    const targetOs = options.targetPlatform || platform();
+    const isolationCheck = this.kernel.checkIsolationSupport(targetOs);
+    const requestedKernelSandbox = Boolean(options.enableKernelSandbox);
+    const requireStrictIsolation = Boolean(options.requireIsolation);
+
+    // Fail-closed refusal: If caller explicitly requires isolation and host cannot enforce kernel sandbox
+    if (requireStrictIsolation && !isolationCheck.supported) {
+      const blockReason = `Execution refused: requireIsolation is enabled, but OS-level kernel isolation is unavailable on host (${targetOs}). Refusing to silently downgrade to process-level firewall.`;
+      const refusalRes: CommandInspectionResult = {
+        isBlocked: true,
+        reason: blockReason,
+        category: "dangerous_mutation",
+      };
+      if (options.onBlock) options.onBlock(refusalRes);
+      return {
+        exitCode: 1,
+        isBlocked: true,
+        blockReason,
+        totalSecretsScrubbed: 0,
+        isolationMechanism: "isolated_refusal",
+        isolationNotice:
+          "Execution refused by strict isolation policy. Command inspection is defense-in-depth and does not constitute an OS kernel security boundary.",
+        downgradedIsolation: false,
+      };
+    }
+
+    // 4. Execution with Real-Time Stdio Redaction Stream
     let totalScrubbed = 0;
     const maskStyle = options.maskStyle || "token";
 
     return new Promise((resolve) => {
       let child: ChildProcess;
-      const osType = platform();
       let isolationMechanism: IsolationMechanism = "process_level_firewall";
       let isolationNotice = "";
+      let downgradedIsolation = false;
 
       // Wrap in OS-level sandbox if requested and supported
       let execCmd = command;
-      if (options.enableKernelSandbox && osType === "darwin") {
+      if (
+        (requestedKernelSandbox || requireStrictIsolation) &&
+        isolationCheck.supported &&
+        targetOs === "darwin"
+      ) {
         isolationMechanism = "macos_sandbox_exec";
         isolationNotice = "Enforcing OS-level kernel confinement via macOS sandbox-exec.";
+        downgradedIsolation = false;
         const home = homedir().replace(/\\/g, "\\\\").replace(/"/g, '\\"');
         const ws = (options.workspaceDir || process.cwd())
           .replace(/\\/g, "\\\\")
           .replace(/"/g, '\\"');
         execCmd = `sandbox-exec -p '(version 1)(deny default)(allow process-exec)(allow sysctl-read)(allow file-read* (subpath "${ws}"))(allow file-write* (subpath "${ws}"))(allow file-read* (subpath "/usr/lib"))(allow file-read* (subpath "/dev/null"))(deny file-read* (subpath "${home}/.ssh"))(deny file-read* (subpath "${home}/.aws"))' ${command}`;
-      } else if (options.enableKernelSandbox) {
+      } else if (requestedKernelSandbox) {
         isolationMechanism = "process_level_firewall";
-        isolationNotice = `Kernel sandbox requested, but OS-level sandbox-exec is only supported on macOS (current host: ${osType}). Executing under AST pattern firewall and real-time streaming redaction.`;
+        downgradedIsolation = true;
+        isolationNotice = `Kernel sandbox requested, but OS-level sandbox-exec is only supported on macOS (current host: ${targetOs}). Executing under AST pattern firewall and real-time streaming redaction. Note: Command inspection is defense-in-depth, not an OS security boundary. Pass requireIsolation: true to fail closed instead of silently downgrading.`;
       } else {
         isolationMechanism = "process_level_firewall";
-        isolationNotice = "Executing under AST pattern inspection firewall and real-time stdio stream redaction.";
+        downgradedIsolation = false;
+        isolationNotice =
+          "Executing under AST pattern inspection firewall and real-time stdio stream redaction (defense-in-depth).";
       }
 
       try {
@@ -166,6 +424,7 @@ export class AgentStdioInterceptor {
           totalSecretsScrubbed: 0,
           isolationMechanism,
           isolationNotice,
+          downgradedIsolation,
         });
         return;
       }
@@ -187,6 +446,7 @@ export class AgentStdioInterceptor {
           totalSecretsScrubbed: totalScrubbed,
           isolationMechanism,
           isolationNotice,
+          downgradedIsolation,
         });
       });
 
@@ -198,6 +458,7 @@ export class AgentStdioInterceptor {
           totalSecretsScrubbed: totalScrubbed,
           isolationMechanism,
           isolationNotice,
+          downgradedIsolation,
         });
       });
     });

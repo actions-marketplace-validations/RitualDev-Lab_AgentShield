@@ -2,7 +2,7 @@
 
 # 🛡️ AgentShield
 
-### **Zero-Leak Secret Defense & Shell Sandbox for Autonomous AI Coding Agents**
+### **Boundary-Safe Secret Defense & Shell Sandbox for Autonomous AI Coding Agents**
 
 [![GitHub Stars](https://img.shields.io/github/stars/RitualDev-Lab/AgentShield?style=for-the-badge&logo=github&color=8b5cf6)](https://github.com/RitualDev-Lab/AgentShield/stargazers)
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg?style=for-the-badge)](LICENSE)
@@ -13,7 +13,7 @@
 <br />
 
 
-[⚡ Quick Start](#-instant-30-second-setup) • [📖 Full Guide](GUIDE.md) • [🛡️ Agent Sandbox](#-1-autonomous-agent-shell-sandbox) • [🐙 GitHub Action](#-3-cicd-security-gate--github-action) • [🤖 Agent Skill](#-ai-agent-skill-integration) • [📋 Compliance](#-4-enterprise-compliance-auditor) • [🏆 Bounties](SECURITY.md) • [🏛️ Governance](GOVERNANCE.md) • [📜 Grants](GRANTS.md) • [👥 Contributors](https://github.com/RitualDev-Lab/AgentShield/graphs/contributors) • [💖 Sponsor (Dodo)](https://checkout.dodopayments.com/buy/pdt_0NpjONGugY5QkrFDUaPva) • [🌐 Website](https://agentshield.ritualdev.in/)
+[⚡ Quick Start](#-instant-30-second-setup) • [📖 Full Guide](GUIDE.md) • [🎯 Threat Model](THREAT_MODEL.md) • [🛡️ Agent Sandbox](#-1-autonomous-agent-shell-sandbox--os-isolation-boundary) • [🐙 GitHub Action](#-3-cicd-security-gate--github-action) • [🤖 Agent Skill](#-ai-agent-skill-integration) • [📋 Compliance](#-4-scope-honest-secret-control-assessment) • [🏆 Bounties](SECURITY.md) • [🏛️ Governance](GOVERNANCE.md) • [📜 Grants](GRANTS.md) • [👥 Contributors](https://github.com/RitualDev-Lab/AgentShield/graphs/contributors) • [💖 Sponsor (Dodo)](https://checkout.dodopayments.com/buy/pdt_0NpjONGugY5QkrFDUaPva) • [🌐 Website](https://agentshield.ritualdev.in/)
 
 
 <br/><br/>
@@ -36,7 +36,7 @@ Autonomous coding agents (**Claude Code**, **Cursor**, **Windsurf**, **Codex**, 
 | **Accidental Exfiltration** | Agent runs `curl` or shell scripts with exported tokens. | Ephemeral tokens dumped into terminal logs & CI artifacts. |
 | **Git Contamination** | Agent writes tests or code with live test credentials. | Secrets committed permanently into Git history and pull requests. |
 
-**AgentShield** acts as a deterministic, local-first zero-leak defense layer that intercepts, audits, and redacts credentials before they ever escape your machine.
+**AgentShield** acts as a deterministic, local-first defense layer that intercepts, audits, and redacts credentials before they ever escape your machine. Grounded in our verifiable **[Threat Model](THREAT_MODEL.md)**, it replaces unprovable marketing claims with mathematically testable streaming invariants.
 
 ---
 
@@ -59,13 +59,42 @@ npx @ritualdev-lab/agentshield exec "cat .env"
 
 ## 🚀 Key Defense Layers
 
-### 🛡️ 1. Autonomous Agent Shell Sandbox
+### 🛡️ 1. Autonomous Agent Shell Sandbox & OS Isolation Boundary
 Intercept and sandbox agent terminal execution. If an agent tries to read `.env`, dump shell variables (`printenv`), or send keys to outbound endpoints, AgentShield blocks it on the fly:
 
 ```bash
 npx @ritualdev-lab/agentshield exec "cat .env"
 # 🚨 [AgentShield Sandbox Block] Blocked attempt to read raw .env or private credential file.
 # Protected credentials from entering agent LLM context window!
+```
+
+#### OS Isolation Guarantees & Defense-in-Depth Boundary
+> [!IMPORTANT]
+> **Defense-in-Depth vs OS Security Boundary**:
+> Userland command inspection (AST parsing and regex heuristics) is **defense-in-depth** designed to prevent accidental exfiltration and common script bypasses. It is **not** an OS kernel security boundary. Arbitrary compiled binaries or direct kernel syscalls require true OS-level containerization.
+
+| Platform | Primary Isolation Mechanism | Security Boundary Level | Guarantees & Limitations |
+| :--- | :--- | :---: | :--- |
+| **macOS** | `macos_sandbox_exec` | **Kernel-Enforced** | System call mediation via Apple Seatbelt; restricts file read/write and networking outside workspace. |
+| **Linux** | `linux_landlock` / `bwrap` | **Defense-in-Depth** *(unless containerized)* | Generates Landlock LSM & bubblewrap profiles. Without a container runtime, Node child processes inherit caller privileges. |
+| **Windows** | `windows_appcontainer` | **Defense-in-Depth** | Generates AppContainer / Low-Integrity profile templates. Win32 child processes run with normal caller token integrity. |
+| **Fallback** | `process_level_firewall` | **Defense-in-Depth** | AST pattern firewall and real-time streaming redaction. |
+
+#### Strict Isolation Enforcement (`--require-isolation`)
+By default, requesting kernel sandboxing on non-macOS hosts logs an isolation warning and runs under the defense-in-depth AST firewall. To **fail-closed** and refuse execution whenever OS-level kernel isolation cannot be guaranteed:
+
+```bash
+# Refuse execution if the host cannot enforce true OS kernel isolation
+npx @ritualdev-lab/agentshield exec "npm test" --require-isolation
+# 🛑 [AgentShield Isolation Refusal] Execution refused: requireIsolation is enabled, but OS-level kernel isolation is unavailable on host (win32). Refusing to silently downgrade to process-level firewall.
+```
+
+In the TypeScript SDK:
+```typescript
+const result = await interceptor.execute(command, {
+  enableKernelSandbox: true,
+  requireIsolation: true, // Fails closed instead of silently downgrading
+});
 ```
 
 ### 🚦 2. Git Pre-Commit Leak Shield
@@ -114,18 +143,32 @@ Or run via CLI in any CI container:
 npx @ritualdev-lab/agentshield ci --base origin/main --report security-report.md
 ```
 
-### 📋 4. Enterprise Compliance Auditor
-Audit files and code diffs against industry regulatory controls with ready-to-present scores:
+### 📋 4. Scope-Honest Secret-Control Assessment
+Assess files and workspace streams against technical secret-handling controls in standard frameworks (SOC 2, PCI-DSS, HIPAA, ISO 27001):
 
 ```bash
 npx @ritualdev-lab/agentshield compliance .env
 ```
 ```text
-📋 [ENTERPRISE COMPLIANCE AUDIT] Status: COMPLIANT (Score: 100%)
-  ✅ [SOC2] CC6.1: Logical Access Controls & Credential Integrity
-  ✅ [PCI-DSS] Req-3.4: Protection of Authentication & Cardholder Tokens
-  ✅ [HIPAA] §164.312(a)(1): Technical Safeguards - Access Control
-  ✅ [ISO27001] A.8.28: Secure Coding & Secret Management
+📋 [SECRET-CONTROL ASSESSMENT] Status: NO_FINDINGS_IN_ASSESSED_CONTROLS (Assessed Controls Score: 100%)
+ℹ️  Scope: Technical secret detection, real-time streaming token redaction, and CLI command firewall.
+⚠️  Disclaimer: Notice: This report reflects only the results of automated secret detection across assessed technical controls ('NO_FINDINGS_IN_ASSESSED_CONTROLS'). It does NOT establish overall organizational SOC 2, HIPAA, PCI-DSS, or ISO 27001 compliance. Overall compliance requires an accredited third-party audit firm, administrative governance, physical safeguards, and operational policies.
+
+  Assessed Controls:
+    ✅ [SOC2] CC6.1: Logical Access Controls & Credential Integrity
+    ✅ [SOC2] CC6.6: Boundary Protection & Unauthorized Egress Controls
+    ✅ [PCI_DSS] Req-3.4: Protection of Authentication & Payment Gateway Secrets
+    ✅ [PCI_DSS] Req-8.3: Strong Authentication Credential Management
+    ✅ [HIPAA] §164.312(a)(1): Technical Safeguards - Access Control & Authentication
+    ✅ [ISO27001] A.8.28: Secure Coding & Secret Management
+    ✅ [ISO27001] A.8.24: Use of Cryptography & Key Protection
+
+  Broader Controls (Not Assessed by Secret Scanning):
+    ⏸️  [SOC2] CC1.1: Integrity & Ethical Values (Governance) (NOT ASSESSED)
+    ⏸️  [SOC2] CC5.2: Risk Assessment & Vendor Management (NOT ASSESSED)
+    ⏸️  [PCI_DSS] Req-9.1: Physical Access Restrictions (NOT ASSESSED)
+    ⏸️  [HIPAA] §164.308(a)(1): Administrative Safeguards (NOT ASSESSED)
+    ⏸️  [ISO27001] A.5.1: Policies for Information Security (NOT ASSESSED)
 ```
 
 ### 🔐 5. Zero-Trust In-Memory Surrogate Injection
@@ -201,6 +244,72 @@ AgentShield combines high-performance regular expressions with **Shannon Entropy
 - 🐙 **Version Control**: GitHub Personal Access Tokens (`ghp_*`, `github_pat_*`)
 - 🔐 **Cryptography**: PEM / OpenSSH private key blocks, JSON Web Tokens (JWT)
 - 📊 **Mathematical Entropy**: High-entropy password detection with false-positive filtering
+
+---
+
+## 🌐 Multi-Language Ecosystem Support (Python, Go, Rust, Agnostic)
+
+AgentShield provides first-class, idiomatic SDKs across multiple languages:
+
+| Language / Platform | Package / Location | Supported Runtimes & Frameworks | Integration Pattern |
+| :--- | :--- | :--- | :--- |
+| **Node.js / TypeScript** | `@ritualdev-lab/agentshield` | Node 20+, Cursor, Claude Code, MCP | In-process native TypeScript |
+| **Python** | `agentshield` (`sdks/python`) | Python 3.9+, LangChain, LangGraph, CrewAI, AutoGen | In-process standalone + Sidecar |
+| **Go** | `sdks/go` | Go 1.21+, `net/http` middleware, Gin, Chi | JSON-RPC 2.0 Stdio Sidecar |
+| **Rust** | `sdks/rust` | Rust 2021 edition | JSON-RPC 2.0 Stdio Sidecar |
+| **Any Language / Shell** | `agentshield sidecar` | Ruby, Elixir, PHP, C++, Bash | Stdio Line-Delimited JSON-RPC 2.0 |
+
+### 🐍 Python SDK (`sdks/python`)
+
+Works in pure-Python without requiring Node.js, with built-in LangChain/LangGraph callbacks:
+
+```python
+from agentshield import AgentShieldEngine, AgentShieldCallbackHandler
+from langchain_openai import ChatOpenAI
+
+shield = AgentShieldEngine()
+redacted = shield.scan_and_redact("Query database with sk-proj-placeholder-token")
+print(redacted["sanitizedText"])
+# "Query database with [AGENT_SHIELD:AI:7b3a4f1c]"
+
+# Attach to LangChain to protect prompt inputs automatically:
+llm = ChatOpenAI(callbacks=[AgentShieldCallbackHandler()])
+```
+
+### 🦫 Go SDK (`sdks/go`)
+
+```go
+import "github.com/RitualDev-Lab/agentshield/sdks/go"
+
+client, _ := agentshield.NewClient(ctx)
+defer client.Close()
+
+res, _ := client.ScanAndRedact(ctx, "Stripe secret sk_live_placeholder_token")
+fmt.Println(res.SanitizedText)
+```
+
+### 🦀 Rust SDK (`sdks/rust`)
+
+```rust
+use agentshield::AgentShieldClient;
+
+let client = AgentShieldClient::new()?;
+let res = client.scan_and_redact("My token is ghp_placeholder_token")?;
+println!("Sanitized: {}", res.sanitized_text);
+```
+
+### ⚡ Language-Agnostic Stdio Sidecar Daemon
+Any language can interact with AgentShield via line-delimited JSON-RPC 2.0:
+```bash
+npx @ritualdev-lab/agentshield sidecar
+```
+```json
+{"jsonrpc": "2.0", "id": 1, "method": "shield.scanAndRedact", "params": {"text": "My API key is sk-proj-placeholder"}}
+```
+Response:
+```json
+{"jsonrpc":"2.0","id":1,"result":{"hasSecrets":true,"sanitizedText":"My API key is [AGENT_SHIELD:AI:...]","findings":[...]}}
+```
 
 ---
 

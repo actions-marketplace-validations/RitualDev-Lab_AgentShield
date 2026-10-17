@@ -1,9 +1,5 @@
 import { createHash } from "node:crypto";
-import {
-  calculateShannonEntropy,
-  isHighEntropySecret,
-  isLikelyFalsePositive,
-} from "./entropy.js";
+import { calculateShannonEntropy, isHighEntropySecret, isLikelyFalsePositive } from "./entropy.js";
 import { BUILTIN_PATTERNS } from "./patterns.js";
 import type { DetectedSecret, ScanOptions, ScanResult, SecretPattern } from "./types.js";
 
@@ -14,6 +10,20 @@ export class AgentShieldEngine {
 
   constructor(customPatterns?: SecretPattern[]) {
     this.patterns = [...BUILTIN_PATTERNS, ...(customPatterns || [])];
+  }
+
+  /**
+   * Returns active secret patterns.
+   */
+  public getPatterns(): SecretPattern[] {
+    return [...this.patterns];
+  }
+
+  /**
+   * Scans text and returns detected secrets list.
+   */
+  public scan(text: string, options: ScanOptions = {}): DetectedSecret[] {
+    return this.scanAndRedact(text, options).findings;
   }
 
   /**
